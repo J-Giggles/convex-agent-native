@@ -1,0 +1,110 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "@giggabit/agent-native-convex-0.1.0-source-extraction",
+  "documentNamespace": "https://spdx.invalid/agent-native-convex/f1fbc476f2405e582c8e5625",
+  "creationInfo": {
+    "created": "2000-01-01T00:00:00Z",
+    "creators": [
+      "Tool: scripts/agent-native-convex/extract.mjs"
+    ]
+  },
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Package--giggabit-agent-native-convex",
+      "name": "@giggabit/agent-native-convex",
+      "versionInfo": "0.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT"
+    },
+    {
+      "SPDXID": "SPDXRef-Dependency--agent-native-core",
+      "name": "@agent-native/core",
+      "versionInfo": "^0.133.2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT"
+    },
+    {
+      "SPDXID": "SPDXRef-Dependency--convex-dev-agent",
+      "name": "@convex-dev/agent",
+      "versionInfo": "^0.6.4",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "Apache-2.0",
+      "licenseDeclared": "Apache-2.0"
+    },
+    {
+      "SPDXID": "SPDXRef-Dependency--standard-schema-spec",
+      "name": "@standard-schema/spec",
+      "versionInfo": "^1.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT"
+    },
+    {
+      "SPDXID": "SPDXRef-Dependency-convex",
+      "name": "convex",
+      "versionInfo": ">=1.39.1 <2",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "Apache-2.0",
+      "licenseDeclared": "Apache-2.0"
+    },
+    {
+      "SPDXID": "SPDXRef-Dependency-drizzle-orm",
+      "name": "drizzle-orm",
+      "versionInfo": ">=0.45.2 <1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "Apache-2.0",
+      "licenseDeclared": "Apache-2.0"
+    },
+    {
+      "SPDXID": "SPDXRef-Dependency-react",
+      "name": "react",
+      "versionInfo": ">=19.2.7 <20",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT"
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-Package--giggabit-agent-native-convex",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Dependency--agent-native-core"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package--giggabit-agent-native-convex",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Dependency--convex-dev-agent"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package--giggabit-agent-native-convex",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Dependency--standard-schema-spec"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package--giggabit-agent-native-convex",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Dependency-convex"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package--giggabit-agent-native-convex",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Dependency-drizzle-orm"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package--giggabit-agent-native-convex",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Dependency-react"
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+	"name": "@giggabit/agent-native-convex",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Independent Convex-native compatibility adapters for public Agent-Native contracts",
+	"type": "module",
+	"license": "MIT",
+	"sideEffects": false,
+	"files": [
+		"dist",
+		"scripts",
+		"src/component",
+		"!src/component/**/*.test.ts",
+		"LICENSE",
+		"README.md",
+		"SECURITY.md",
+		"THIRD_PARTY_NOTICES.md"
+	],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./action": {
+			"types": "./dist/action/index.d.ts",
+			"default": "./dist/action/index.js"
+		},
+		"./persistence": {
+			"types": "./dist/persistence/index.d.ts",
+			"default": "./dist/persistence/index.js"
+		},
+		"./drizzle": {
+			"types": "./dist/drizzle/index.d.ts",
+			"default": "./dist/drizzle/index.js"
+		},
+		"./client": {
+			"types": "./dist/client/index.d.ts",
+			"default": "./dist/client/index.js"
+		},
+		"./mcp": {
+			"types": "./dist/protocols/mcp.d.ts",
+			"default": "./dist/protocols/mcp.js"
+		},
+		"./a2a": {
+			"types": "./dist/protocols/a2a.d.ts",
+			"default": "./dist/protocols/a2a.js"
+		},
+		"./cli": {
+			"types": "./dist/protocols/cli.d.ts",
+			"default": "./dist/protocols/cli.js"
+		},
+		"./protocols": {
+			"types": "./dist/protocols/index.d.ts",
+			"default": "./dist/protocols/index.js"
+		},
+		"./convex": {
+			"types": "./dist/convex/index.d.ts",
+			"default": "./dist/convex/index.js"
+		},
+		"./extensions": {
+			"types": "./dist/extensions/index.d.ts",
+			"default": "./dist/extensions/index.js"
+		},
+		"./automations": {
+			"types": "./dist/automations/index.d.ts",
+			"default": "./dist/automations/index.js"
+		},
+		"./test": {
+			"types": "./dist/test/index.d.ts",
+			"default": "./dist/test/index.js"
+		},
+		"./convex.config": {
+			"types": "./dist/component/convex.config.d.ts",
+			"default": "./dist/component/convex.config.js"
+		},
+		"./convex.config.js": {
+			"types": "./dist/component/convex.config.d.ts",
+			"default": "./dist/component/convex.config.js"
+		},
+		"./_generated/component.js": {
+			"types": "./dist/component/_generated/component.d.ts",
+			"default": "./dist/component/_generated/component.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"scripts": {
+		"clean": "node scripts/build.mjs --clean-only",
+		"build": "node scripts/build.mjs",
+		"typecheck": "tsc --noEmit -p tsconfig.json",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"prepack": "node scripts/build.mjs",
+		"pack:check": "node scripts/verify-release.mjs --pack-only",
+		"release:verify": "node scripts/verify-release.mjs"
+	},
+	"dependencies": {
+		"@standard-schema/spec": "^1.1.0"
+	},
+	"peerDependencies": {
+		"@agent-native/core": "^0.133.2",
+		"@convex-dev/agent": "^0.6.4",
+		"convex": ">=1.39.1 <2",
+		"drizzle-orm": ">=0.45.2 <1",
+		"react": ">=19.2.7 <20"
+	},
+	"peerDependenciesMeta": {
+		"@agent-native/core": {
+			"optional": true
+		},
+		"@convex-dev/agent": {
+			"optional": true
+		},
+		"drizzle-orm": {
+			"optional": true
+		},
+		"react": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"@agent-native/core": "0.133.2",
+		"@convex-dev/agent": "0.6.4",
+		"@types/better-sqlite3": "^7.6.13",
+		"@types/node": "^22.0.0",
+		"better-sqlite3": "^12.4.1",
+		"convex": "^1.43.0",
+		"convex-test": "^0.0.54",
+		"drizzle-orm": "^0.45.2",
+		"react": "^19.2.7",
+		"react-dom": "^19.2.7",
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.18"
+	},
+	"engines": {
+		"node": ">=22.22.0 <27"
+	}
+}

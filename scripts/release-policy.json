@@ -1,0 +1,93 @@
+{
+	"schemaVersion": 1,
+	"allowedLicenses": [
+		"(AFL-2.1 OR BSD-3-Clause)",
+		"(BSD-2-Clause OR MIT OR Apache-2.0)",
+		"(MIT AND Zlib)",
+		"(MIT OR GPL-3.0-or-later)",
+		"(MIT OR WTFPL)",
+		"0BSD",
+		"Apache-2.0",
+		"BSD",
+		"BSD-2-Clause",
+		"BSD-3-Clause",
+		"BlueOak-1.0.0",
+		"CC-BY-4.0",
+		"CC0-1.0",
+		"ISC",
+		"MIT",
+		"MIT AND ISC",
+		"MIT-0",
+		"MPL-2.0",
+		"Python-2.0",
+		"Unlicense"
+	],
+	"residualLicenseAcceptances": [
+		{
+			"packagePattern": "^@img/sharp-libvips-(?:linux|linuxmusl)-",
+			"license": "LGPL-3.0-or-later",
+			"reason": "Optional @agent-native/core image tooling dynamically loads the unmodified libvips shared library; it is not bundled by this package."
+		},
+		{
+			"packagePattern": "^@img/sharp-wasm32$",
+			"license": "Apache-2.0 AND LGPL-3.0-or-later AND MIT",
+			"reason": "Optional @agent-native/core image tooling includes an upstream wasm alternative; it is not installed by the runtime matrix or bundled by this package."
+		},
+		{
+			"packagePattern": "^@better-fetch/fetch$",
+			"license": "UNKNOWN",
+			"reason": "Optional @agent-native/core transitive package; registry metadata omits its declared license and this exact residual is machine isolated."
+		},
+		{
+			"packagePattern": "^@builder\\.io/ai-utils$",
+			"license": "UNKNOWN",
+			"reason": "Optional @agent-native/core transitive package; registry metadata omits its declared license and this exact residual is machine isolated."
+		}
+	],
+	"allowedLifecycleScripts": [
+		{
+			"package": "better-sqlite3@12.11.1",
+			"stage": "install",
+			"commandSha256": "74676e9e464b586ebdc3e9c2a77e3fe26d534f60ddd9053bafd11e5b0a9c7cfe",
+			"reason": "Optional upstream database adapter native build; installation is disabled and this package does not load it."
+		},
+		{
+			"package": "esbuild@0.27.0",
+			"stage": "postinstall",
+			"commandSha256": "912d4d8f507b7b392ae422a459f98da94669a742e4cc43cfe061e630ee2846fe",
+			"reason": "Convex CLI platform-binary selector; installation is disabled during verification."
+		},
+		{
+			"package": "tesseract.js@7.0.0",
+			"stage": "postinstall",
+			"commandSha256": "98fb33e3d0a9e234d54789dfc7b8af34e8309bb6a45b1c26dff75272aad32185",
+			"reason": "Optional upstream OCR sponsorship message; installation is disabled and OCR is not loaded by this package."
+		}
+	],
+	"unreachableHighAdvisories": [
+		{
+			"package": "better-auth",
+			"version": "1.6.16",
+			"source": 1124303,
+			"reason": "Optional @agent-native/core authentication implementation is outside the adapter's type-only peer and independently implemented AgentCard runtime module."
+		},
+		{
+			"package": "undici",
+			"version": "5.29.0",
+			"source": 1114638,
+			"reason": "Optional @convex-dev/agent provider utility; this package imports only its side-effect-free convex.config subpath, which depends directly on convex/server and does not load provider utilities or WebSocket code."
+		},
+		{
+			"package": "undici",
+			"version": "5.29.0",
+			"source": 1114640,
+			"reason": "Optional @convex-dev/agent provider utility; this package imports only its side-effect-free convex.config subpath, which depends directly on convex/server and does not load provider utilities or WebSocket code."
+		},
+		{
+			"package": "undici",
+			"version": "5.29.0",
+			"source": 1121245,
+			"reason": "Optional @convex-dev/agent provider utility; this package imports only its side-effect-free convex.config subpath, which depends directly on convex/server and does not load provider utilities or WebSocket code."
+		}
+	]
+}
