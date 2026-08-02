@@ -1,10 +1,18 @@
 {
 	"name": "@giggabit/agent-native-convex",
 	"version": "0.1.0",
-	"private": true,
+	"private": false,
 	"description": "Independent Convex-native compatibility adapters for public Agent-Native contracts",
 	"type": "module",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/J-Giggles/convex-agent-native.git"
+	},
+	"homepage": "https://github.com/J-Giggles/convex-agent-native#readme",
+	"bugs": {
+		"url": "https://github.com/J-Giggles/convex-agent-native/issues"
+	},
 	"sideEffects": false,
 	"files": [
 		"dist",
