@@ -84,6 +84,11 @@ test("dependency installs are pinned and frozen across every workspace", async (
 	}
 	assert.match(ciSource, /pnpm install --frozen-lockfile --ignore-scripts/);
 	assert.doesNotMatch(ciSource, /npm install --ignore-scripts --no-package-lock/);
+	assert.equal(
+		(ciSource.match(/persist-credentials: false/gu) ?? []).length,
+		2,
+		"every CI checkout must avoid persisting repository credentials",
+	);
 });
 
 test("DEP-I-002: demo deployment rebuilds package subpath artifacts from a clean checkout", async () => {

@@ -23,6 +23,7 @@ test("DEP-N-001: Pages publishes only the demo/dist static artifact", async () =
 	assert.match(source, /pnpm --dir demo run build/);
 	assert.match(source, /cache-dependency-path:\s*pnpm-lock\.yaml/);
 	assert.match(source, /path:\s*demo\/dist/);
+	assert.match(source, /persist-credentials: false/);
 	assert.match(source, /actions\/deploy-pages@[0-9a-f]{40}/);
 	assert.doesNotMatch(source, /(?:pull_request|workflow_dispatch|push):/);
 	assert.doesNotMatch(source, /run:\s+npm(?:\s|$)|npm --prefix/);

@@ -1,12 +1,12 @@
-## What problem does this solve?
+# What problem does this solve?
 
 <!-- Describe the user-facing problem and the smallest boundary changed. -->
 
-## What changed?
+# What changed?
 
 <!-- Include compatibility, persistence, authorization, and public-exposure effects when relevant. -->
 
-## Verification
+# Verification
 
 - [ ] Added or updated normal-path tests.
 - [ ] Added or updated refusal and durable-invariant tests when relevant.
@@ -16,6 +16,6 @@
 - [ ] Updated documentation and attribution where needed.
 - [ ] Confirmed the change contains no credentials, private data, production payloads, or generated local state.
 
-## Compatibility note
+# Compatibility note
 
 <!-- State whether this is additive, a compatible fix, or a deliberate pre-1.0 breaking change. -->
