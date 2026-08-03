@@ -94,3 +94,27 @@ test("DEP-I-002: demo deployment rebuilds package subpath artifacts from a clean
 	assert.equal(demoPackage.scripts.predeploy, "pnpm --dir .. build");
 	assert.equal(demoPackage.scripts.deploy, "convex deploy --typecheck enable");
 });
+
+test("community and clean-consumer release surfaces remain present", async () => {
+	const requiredFiles = [
+		"CODE_OF_CONDUCT.md",
+		"CONTRIBUTING.md",
+		"GOVERNANCE.md",
+		"SUPPORT.md",
+		"CHANGELOG.md",
+		"docs/getting-started.md",
+		".github/ISSUE_TEMPLATE/bug_report.yml",
+		".github/ISSUE_TEMPLATE/feature_request.yml",
+		".github/ISSUE_TEMPLATE/config.yml",
+		".github/PULL_REQUEST_TEMPLATE.md",
+		"scripts/verify-convex-consumer.mjs",
+	];
+	const sources = await Promise.all(
+		requiredFiles.map((relativePath) => readFile(path.join(repositoryRoot, relativePath), "utf8")),
+	);
+	for (const [index, source] of sources.entries()) {
+		assert.ok(source.trim().length > 0, `${requiredFiles[index]} must not be empty`);
+	}
+	assert.match(sources[5], /Convex `>=1\.39\.1 <2`/u);
+	assert.match(sources[10], /convex\.config\.js/u);
+});

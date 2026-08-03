@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Installation and design questions
+    url: https://github.com/J-Giggles/convex-agent-native/discussions
+    about: Ask the community for help or discuss an idea before opening implementation work.
+  - name: Private security report
+    url: https://github.com/J-Giggles/convex-agent-native/security/advisories/new
+    about: Report vulnerabilities without exposing sensitive detail publicly.
+  - name: Original Agent-Native project
+    url: https://github.com/BuilderIO/agent-native
+    about: Ask about Builder.io's official Agent-Native framework in its own repository.

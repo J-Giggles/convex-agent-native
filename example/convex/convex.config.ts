@@ -1,5 +1,5 @@
 import agent from "@convex-dev/agent/convex.config";
-import agentNative from "@giggabit/agent-native-convex/convex.config";
+import agentNative from "@giggabit/agent-native-convex/convex.config.js";
 import { defineApp } from "convex/server";
 
 const app = defineApp();

@@ -96,10 +96,16 @@ try {
 		assert.deepEqual(packed, source, `archive content drift: ${relativePath}`);
 	}
 	for (const required of [
+		"CHANGELOG.md",
+		"CODE_OF_CONDUCT.md",
+		"CONTRIBUTING.md",
 		"dist/BUILD_MANIFEST.json",
+		"docs/compatibility.md",
+		"docs/getting-started.md",
 		"LICENSE",
 		"README.md",
 		"SECURITY.md",
+		"SUPPORT.md",
 		"THIRD_PARTY_NOTICES.md",
 	]) {
 		assert.ok(archiveFiles.includes(required), `archive is missing ${required}`);
