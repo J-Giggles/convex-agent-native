@@ -15,6 +15,12 @@ function isIgnored(relativePath) {
 	return result.status === 0;
 }
 
+function checkoutSteps(workflowSource) {
+	return workflowSource
+		.split(/(?=^\s{6}- )/mu)
+		.filter((step) => /uses:\s+actions\/checkout@/u.test(step));
+}
+
 test("repository excludes credentials and generated outputs without excluding public inputs", () => {
 	for (const generatedOrSecret of [
 		".env",
@@ -84,11 +90,11 @@ test("dependency installs are pinned and frozen across every workspace", async (
 	}
 	assert.match(ciSource, /pnpm install --frozen-lockfile --ignore-scripts/);
 	assert.doesNotMatch(ciSource, /npm install --ignore-scripts --no-package-lock/);
-	assert.equal(
-		(ciSource.match(/persist-credentials: false/gu) ?? []).length,
-		2,
-		"every CI checkout must avoid persisting repository credentials",
-	);
+	const ciCheckoutSteps = checkoutSteps(ciSource);
+	assert.equal(ciCheckoutSteps.length, 2, "CI must have exactly two checkout steps");
+	for (const step of ciCheckoutSteps) {
+		assert.match(step, /persist-credentials: false/u);
+	}
 });
 
 test("DEP-I-002: demo deployment rebuilds package subpath artifacts from a clean checkout", async () => {
