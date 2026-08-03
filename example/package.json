@@ -10,7 +10,7 @@
 	"dependencies": {
 		"@agent-native/core": "0.133.2",
 		"@convex-dev/agent": "0.6.4",
-		"@giggabit/agent-native-convex": "file:..",
+		"@giggabit/agent-native-convex": "link:..",
 		"ai": "6.0.191",
 		"convex": "1.43.0",
 		"convex-helpers": "0.1.114",

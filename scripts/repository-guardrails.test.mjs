@@ -33,11 +33,19 @@ test("repository excludes credentials and generated outputs without excluding pu
 });
 
 test("dependency installs are pinned and frozen across every workspace", async () => {
-	const [rootPackageSource, demoPackageSource, workspaceSource, lockSource, ciSource] =
+	const [
+		rootPackageSource,
+		demoPackageSource,
+		examplePackageSource,
+		workspaceSource,
+		lockSource,
+		ciSource,
+	] =
 		await Promise.all(
 			[
 				"package.json",
 				"demo/package.json",
+				"example/package.json",
 				"pnpm-workspace.yaml",
 				"pnpm-lock.yaml",
 				".github/workflows/ci.yml",
@@ -45,6 +53,7 @@ test("dependency installs are pinned and frozen across every workspace", async (
 		);
 	const rootPackage = JSON.parse(rootPackageSource);
 	const demoPackage = JSON.parse(demoPackageSource);
+	const examplePackage = JSON.parse(examplePackageSource);
 
 	assert.equal(rootPackage.packageManager, "pnpm@10.24.0");
 	assert.ok(
@@ -65,6 +74,13 @@ test("dependency installs are pinned and frozen across every workspace", async (
 	}
 	for (const [name, version] of Object.entries(demoPackage.devDependencies)) {
 		assert.notEqual(version, "latest", `${name} must be pinned`);
+	}
+	for (const workspacePackage of [demoPackage, examplePackage]) {
+		assert.equal(
+			workspacePackage.dependencies["@giggabit/agent-native-convex"],
+			"link:..",
+			`${workspacePackage.name} must resolve clean package builds through the live workspace link`,
+		);
 	}
 	assert.match(ciSource, /pnpm install --frozen-lockfile --ignore-scripts/);
 	assert.doesNotMatch(ciSource, /npm install --ignore-scripts --no-package-lock/);
