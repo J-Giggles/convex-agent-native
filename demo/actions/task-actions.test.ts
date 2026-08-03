@@ -6,7 +6,12 @@ import {
 import { resolveActionScope } from "@giggabit/agent-native-convex/contracts";
 import { describe, expect, it } from "vitest";
 
-import { createTaskActionCatalog, type Task, type TaskStore } from "./task-actions.js";
+import {
+  createTaskActionCatalog,
+  taskActionDefinitions,
+  type Task,
+  type TaskStore,
+} from "./task-actions.js";
 
 class MemoryInvocations implements InvocationPersistence {
   private readonly records = new Map<string, InvocationRecord>();
@@ -20,7 +25,10 @@ class MemoryInvocations implements InvocationPersistence {
         existing.actorId === input.actorId &&
         existing.requestFingerprint === input.requestFingerprint &&
         existing.caller === input.caller;
-      return { outcome: same ? (existing.status === "running" ? "in_flight" : "replay") : "conflict", invocation: existing } as const;
+      return {
+        outcome: same ? (existing.status === "running" ? "in_flight" : "replay") : "conflict",
+        invocation: existing,
+      } as const;
     }
     const now = Date.now();
     const invocation: InvocationRecord = {
@@ -52,9 +60,11 @@ class MemoryInvocations implements InvocationPersistence {
   }
 
   async getInvocation(input: Parameters<InvocationPersistence["getInvocation"]>[0]) {
-    return [...this.records.values()].find(
-      ({ id, scopeKey }) => id === input.invocationId && scopeKey === input.scopeKey,
-    ) ?? null;
+    return (
+      [...this.records.values()].find(
+        ({ id, scopeKey }) => id === input.invocationId && scopeKey === input.scopeKey,
+      ) ?? null
+    );
   }
 }
 
@@ -68,7 +78,14 @@ class MemoryTasks implements TaskStore {
   }
   async create(title: string) {
     this.writes += 1;
-    const task = { id: `task-${this.tasks.length + 1}`, title, done: false, sortOrder: this.tasks.length, createdAt: 1, updatedAt: 1 };
+    const task = {
+      id: `task-${this.tasks.length + 1}`,
+      title,
+      done: false,
+      sortOrder: this.tasks.length,
+      createdAt: 1,
+      updatedAt: 1,
+    };
     this.tasks.push(task);
     return task;
   }
@@ -110,6 +127,7 @@ function harness() {
         input,
         caller: options.caller ?? "frontend",
         scope,
+        executionContext: { taskStore: store },
         ...(options.key ? { idempotencyKey: options.key } : {}),
         ...(options.approved ? { approvedToolCallKey: "approved" } : {}),
       },
@@ -145,11 +163,17 @@ describe("shared Builder-style task actions", () => {
 
   it("TSK-F-001 refuses blank titles, no-op patches, unknown tasks, and unapproved agent deletion", async () => {
     const { invoke } = harness();
-    await expect(invoke("create-task", { title: "" }, { key: "bad-create" })).rejects.toMatchObject({ code: "ACTION_INPUT_INVALID" });
+    await expect(invoke("create-task", { title: "" }, { key: "bad-create" })).rejects.toMatchObject(
+      { code: "ACTION_INPUT_INVALID" },
+    );
     const created = await invoke("create-task", { title: "Keep" }, { key: "create" });
     const taskId = (created.result as Task).id;
-    await expect(invoke("update-task", { taskId }, { key: "noop" })).rejects.toThrow("Provide at least one");
-    await expect(invoke("update-task", { taskId: "missing", done: true }, { key: "missing" })).rejects.toThrow("Task not found");
+    await expect(invoke("update-task", { taskId }, { key: "noop" })).rejects.toThrow(
+      "Provide at least one",
+    );
+    await expect(
+      invoke("update-task", { taskId: "missing", done: true }, { key: "missing" }),
+    ).rejects.toThrow("Task not found");
     await expect(
       invoke("delete-task", { taskId }, { key: "agent-delete", caller: "tool" }),
     ).rejects.toMatchObject({ code: "APPROVAL_REQUIRED" });
@@ -167,15 +191,23 @@ describe("shared Builder-style task actions", () => {
 
   it("ACT-N-001 exposes the exact registered definition objects to every surface adapter", () => {
     const { catalog } = harness();
+    const otherCatalog = createTaskActionCatalog(new MemoryTasks());
+    expect(catalog.definitions).toBe(taskActionDefinitions);
+    expect(otherCatalog.definitions).toBe(taskActionDefinitions);
     for (const [name, definition] of Object.entries(catalog.definitions)) {
       expect(catalog.registry.get(name).definition).toBe(definition);
+      expect(otherCatalog.registry.get(name).definition).toBe(definition);
     }
   });
 
   it("ACT-F-001 rejects unknown actions and invalid input before touching the store", async () => {
     const { invoke, store } = harness();
-    await expect(invoke("missing-action", {}, { key: "missing" })).rejects.toMatchObject({ code: "ACTION_NOT_FOUND" });
-    await expect(invoke("create-task", { title: 42 }, { key: "invalid" })).rejects.toMatchObject({ code: "ACTION_INPUT_INVALID" });
+    await expect(invoke("missing-action", {}, { key: "missing" })).rejects.toMatchObject({
+      code: "ACTION_NOT_FOUND",
+    });
+    await expect(invoke("create-task", { title: 42 }, { key: "invalid" })).rejects.toMatchObject({
+      code: "ACTION_INPUT_INVALID",
+    });
     expect(store.writes).toBe(0);
   });
 

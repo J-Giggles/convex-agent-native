@@ -1,4 +1,7 @@
-import { resolveActionScope, type ResolvedActionScope } from "@giggabit/agent-native-convex/contracts";
+import {
+  resolveActionScope,
+  type ResolvedActionScope,
+} from "@giggabit/agent-native-convex/contracts";
 
 const TOKEN_PREFIX = "demo_";
 const PUBLIC_ID_BYTES = 12;
@@ -48,14 +51,37 @@ export async function capabilityDigest(secret: string): Promise<string> {
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+export function demoSessionScopeKey(publicId: string, resetVersion = 0): string {
+  if (
+    !PUBLIC_ID_PATTERN.test(publicId) ||
+    !Number.isSafeInteger(resetVersion) ||
+    resetVersion < 0
+  ) {
+    throw new Error("Invalid stored demo capability");
+  }
+  return `demo:${publicId}${resetVersion === 0 ? "" : `:r${resetVersion}`}`;
+}
+
+export function demoSessionQuotaKey(publicId: string): string {
+  return `${demoSessionScopeKey(publicId)}:quota`;
+}
+
 export function resolveCapabilityScope(input: {
   publicId: string;
   secretDigest: string;
+  scopeKey?: string;
 }): ResolvedActionScope {
   if (!PUBLIC_ID_PATTERN.test(input.publicId) || !/^[a-f0-9]{64}$/u.test(input.secretDigest)) {
     throw new Error("Invalid stored demo capability");
   }
-  const scopeKey = `demo:${input.publicId}`;
+  const baseScopeKey = demoSessionScopeKey(input.publicId);
+  const scopeKey = input.scopeKey ?? baseScopeKey;
+  if (
+    scopeKey !== baseScopeKey &&
+    !new RegExp(`^${baseScopeKey}:r[1-9][0-9]*$`, "u").test(scopeKey)
+  ) {
+    throw new Error("Invalid stored demo capability");
+  }
   return resolveActionScope({
     scopeKey,
     subjectId: `anonymous:${input.publicId}`,

@@ -8,6 +8,7 @@
     "build": "tsc --noEmit -p tsconfig.json && vite build",
     "pretest": "pnpm --dir .. build",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "test:watch": "vitest",
     "pretypecheck": "pnpm --dir .. build",
     "typecheck": "tsc --noEmit -p tsconfig.json"
@@ -21,6 +22,7 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "1.62.1",
     "@types/node": "22.20.1",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",

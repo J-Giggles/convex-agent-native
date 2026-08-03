@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { resolveDemoAgentProvider } from "./provider.js";
+import { taskActionDefinitions } from "../actions/task-actions.js";
+import { planDemoAgentTurn, resolveDemoAgentProvider } from "./provider.js";
 
 describe("server-only demo agent provider policy", () => {
   it("CHT-I-001 defaults to deterministic planning and requires explicit enablement plus registration", async () => {
@@ -35,5 +36,8 @@ describe("server-only demo agent provider policy", () => {
         {},
       ),
     ).toThrow("unavailable");
+
+    await planDemoAgentTurn(plugin, "list tasks", []);
+    expect(plugin.plan).toHaveBeenLastCalledWith("list tasks", [], taskActionDefinitions);
   });
 });

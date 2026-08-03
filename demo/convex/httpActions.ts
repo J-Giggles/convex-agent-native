@@ -4,6 +4,7 @@ import { executeDemoAction } from "./actions.js";
 import { allowedBootstrapOrigin, corsHeaders, resolveBootstrapRequest } from "./bootstrap.js";
 import { capabilityDigest, createCapability } from "./capabilities.js";
 import { readDirectActionEnvelope } from "./direct.js";
+import { publicHttpFailure } from "./httpErrors.js";
 import { handleDemoMcp } from "./mcp.js";
 
 export const sessionOptions = httpAction(async (_ctx, request) => {
@@ -43,10 +44,13 @@ export const sessionPost = httpAction(async (ctx, request) => {
       provenanceDigest,
       now: Date.now(),
     });
-    return new Response(JSON.stringify({ capability: capability.token, expiresAt: session.expiresAt }), {
-      status: 201,
-      headers: corsHeaders(policy.allowOrigin),
-    });
+    return new Response(
+      JSON.stringify({ capability: capability.token, expiresAt: session.expiresAt }),
+      {
+        status: 201,
+        headers: corsHeaders(policy.allowOrigin),
+      },
+    );
   } catch {
     return new Response(JSON.stringify({ error: "Demo capacity is temporarily unavailable" }), {
       status: 429,
@@ -63,9 +67,10 @@ export const directActionPost = httpAction(async (ctx, request) => {
       status: 200,
       headers: { "cache-control": "no-store", "content-type": "application/json" },
     });
-  } catch {
+  } catch (error) {
+    const failure = publicHttpFailure(error);
     return new Response(JSON.stringify({ error: "Direct action request refused" }), {
-      status: 400,
+      status: failure.status,
       headers: { "cache-control": "no-store", "content-type": "application/json" },
     });
   }
@@ -81,15 +86,24 @@ export const mcpPost = httpAction(async (ctx, request) => {
       status: 200,
       headers: { "cache-control": "no-store", "content-type": "application/json" },
     });
-  } catch {
+  } catch (error) {
+    const failure = publicHttpFailure(error);
+    const rpcCode =
+      failure.code === "invalid_request"
+        ? -32600
+        : failure.code === "unauthorized"
+          ? -32001
+          : failure.code === "capacity"
+            ? -32002
+            : -32603;
     return new Response(
       JSON.stringify({
         jsonrpc: "2.0",
         id: null,
-        error: { code: -32000, message: "MCP request refused" },
+        error: { code: rpcCode, message: "MCP request refused" },
       }),
       {
-        status: 400,
+        status: failure.status,
         headers: { "cache-control": "no-store", "content-type": "application/json" },
       },
     );

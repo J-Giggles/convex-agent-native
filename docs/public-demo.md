@@ -45,13 +45,13 @@ Every successful write returns an invocation ID and projects a bounded, capabili
 
 ## Safety and reset
 
-- bootstrap: 5 sessions per provenance per hour;
+- bootstrap: 100 sessions deployment-wide per hour;
 - chat: 8 turns per session per minute;
 - actions: 60 calls per session per minute;
 - reset: 3 resets per session per hour;
-- deployment: 5,000 charged units per day.
+- deployment-wide: 5,000 server-metered bootstrap, action, chat, and reset operations per UTC day.
 
-The server rejects unknown origins for browser bootstrap, malformed or oversized HTTP bodies, caller-selected scope, missing write idempotency, invalid/expired capabilities, and quota exhaustion. Reset is scoped to the current anonymous session and atomically restores the two seeded tasks while clearing its chat and action state.
+The server rejects unknown origins for browser bootstrap, malformed or oversized HTTP bodies, caller-selected scope, missing write idempotency, invalid/expired capabilities, task cardinality above 200, and quota exhaustion. Bootstrap uses one server-owned deployment bucket rather than trusting caller-controlled forwarding headers. The deployment counter is an application-operation safety limit, not a claim about the provider's billing-unit accounting; provider-backed model use is disabled, so the public model-cost ceiling is zero. Reset is scoped to the current anonymous capability: it atomically rotates to a fresh action scope and restores the two seeded tasks, so chat, pending confirmation, projected receipts, and idempotency state begin empty. Prior audit records remain durably retained in their old, inaccessible scope.
 
 ## Provenance
 

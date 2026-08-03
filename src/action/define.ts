@@ -27,7 +27,10 @@ export interface DefineConvexActionOptions<
 	readonly readOnly?: boolean;
 	readonly toolCallable?: boolean;
 	readonly publicAgent?: ActionDefinition<unknown, unknown>["publicAgent"];
-	readonly needsApproval?: ActionDefinition<StandardSchemaV1.InferOutput<TSchema>, TResult>["needsApproval"];
+	readonly needsApproval?: ActionDefinition<
+		StandardSchemaV1.InferOutput<TSchema>,
+		TResult
+	>["needsApproval"];
 }
 
 /**
@@ -46,10 +49,14 @@ export function defineConvexAction<
 	options: DefineConvexActionOptions<TSchema, TResult, TOutputSchema>,
 ): ConvexActionDefinition<StandardSchemaV1.InferInput<TSchema>, TResult> {
 	const run = async (
-		args: StandardSchemaV1.InferOutput<TSchema>,
+		args: StandardSchemaV1.InferInput<TSchema>,
 		ctx?: ActionRunContext,
 	): Promise<TResult> => {
-		const result = await options.run(args, ctx);
+		const inputValidation = await options.schema["~standard"].validate(args);
+		if (inputValidation.issues !== undefined) {
+			throw new Error("Action input did not match schema");
+		}
+		const result = await options.run(inputValidation.value, ctx);
 		if (options.outputSchema === undefined) return result;
 		const validation = await options.outputSchema["~standard"].validate(result);
 		if (validation.issues !== undefined) {

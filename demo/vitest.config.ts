@@ -8,6 +8,7 @@ export default defineConfig({
     cache: false,
     environment: "node",
     fileParallelism: false,
+    include: ["{actions,agent,convex,src}/**/*.test.{ts,tsx}"],
     maxWorkers: 1,
     pool: "forks",
   },

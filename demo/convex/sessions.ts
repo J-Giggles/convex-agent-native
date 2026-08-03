@@ -1,8 +1,20 @@
 import { v } from "convex/values";
 
-import { capabilityDigest, parseCapability, resolveCapabilityScope } from "./capabilities.js";
+import {
+  capabilityDigest,
+  demoSessionQuotaKey,
+  demoSessionScopeKey,
+  parseCapability,
+  resolveCapabilityScope,
+} from "./capabilities.js";
 import type { Doc } from "./_generated/dataModel.js";
-import { internalMutation, mutation, query, type MutationCtx, type QueryCtx } from "./_generated/server.js";
+import {
+  internalMutation,
+  mutation,
+  query,
+  type MutationCtx,
+  type QueryCtx,
+} from "./_generated/server.js";
 import { consumeQuota } from "./quotas.js";
 
 const SESSION_TTL_MS = 86_400_000;
@@ -19,7 +31,14 @@ function safeEqual(left: string, right: string): boolean {
 
 async function seedTasks(ctx: Pick<MutationCtx, "db">, scopeKey: string, now: number) {
   for (const [sortOrder, title] of SEED_TITLES.entries()) {
-    await ctx.db.insert("tasks", { scopeKey, title, done: false, sortOrder, createdAt: now, updatedAt: now });
+    await ctx.db.insert("tasks", {
+      scopeKey,
+      title,
+      done: false,
+      sortOrder,
+      createdAt: now,
+      updatedAt: now,
+    });
   }
 }
 
@@ -60,12 +79,15 @@ const issueArgs = {
   now: v.number(),
 };
 
-async function issueHandler(ctx: MutationCtx, args: {
-  publicId: string;
-  secretDigest: string;
-  provenanceDigest: string;
-  now: number;
-}) {
+async function issueHandler(
+  ctx: MutationCtx,
+  args: {
+    publicId: string;
+    secretDigest: string;
+    provenanceDigest: string;
+    now: number;
+  },
+) {
   const scope = resolveCapabilityScope(args);
   if (!/^[a-f0-9]{64}$/u.test(args.provenanceDigest)) throw new Error("Invalid provenance");
   const existing = await ctx.db
@@ -107,6 +129,7 @@ export const resolve = internalMutation({
       subjectId: scope.subjectId,
       organizationId: scope.organizationId,
       provenanceDigest: session.provenanceDigest,
+      quotaKey: demoSessionQuotaKey(session.publicId),
       expiresAt: session.expiresAt,
     };
   },
@@ -131,7 +154,7 @@ export const reset = mutation({
     const { session } = await requireSession(ctx, args.capability);
     const now = Date.now();
     await consumeQuota(ctx, {
-      scopeKey: session.scopeKey,
+      scopeKey: demoSessionQuotaKey(session.publicId),
       provenanceDigest: session.provenanceDigest,
       operation: "reset",
       units: 1,
@@ -152,9 +175,10 @@ export const reset = mutation({
     for (const task of tasks) await ctx.db.delete(task._id);
     for (const message of chatMessages) await ctx.db.delete(message._id);
     if (pendingDelete) await ctx.db.delete(pendingDelete._id);
-    await seedTasks(ctx, session.scopeKey, now);
     const resetVersion = session.resetVersion + 1;
-    await ctx.db.patch(session._id, { resetVersion, updatedAt: now });
+    const scopeKey = demoSessionScopeKey(session.publicId, resetVersion);
+    await seedTasks(ctx, scopeKey, now);
+    await ctx.db.patch(session._id, { scopeKey, resetVersion, updatedAt: now });
     return { resetVersion };
   },
 });

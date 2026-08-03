@@ -21,8 +21,10 @@ describe("Convex-safe Builder action definition", () => {
 		const definition = defineConvexAction({
 			description: "Echo a bounded value",
 			schema: schema<{ value: string }>((value) =>
-				value && typeof value === "object" && typeof (value as { value?: unknown }).value === "string"
-					? { value: (value as { value: string }).value }
+				value &&
+				typeof value === "object" &&
+				typeof (value as { value?: unknown }).value === "string"
+					? { value: (value as { value: string }).value.trim() }
 					: null,
 			),
 			toolParameters: {
@@ -31,7 +33,9 @@ describe("Convex-safe Builder action definition", () => {
 				required: ["value"],
 			},
 			outputSchema: schema<{ echoed: string }>((value) =>
-				value && typeof value === "object" && typeof (value as { echoed?: unknown }).echoed === "string"
+				value &&
+				typeof value === "object" &&
+				typeof (value as { echoed?: unknown }).echoed === "string"
 					? { echoed: (value as { echoed: string }).echoed }
 					: null,
 			),
@@ -46,9 +50,37 @@ describe("Convex-safe Builder action definition", () => {
 			description: "Echo a bounded value",
 			parameters: expect.objectContaining({ type: "object" }),
 		});
-		await expect(definition.run({ value: "hello" }, { caller: "mcp" })).resolves.toEqual({
+		await expect(definition.run({ value: "  hello  " }, { caller: "mcp" })).resolves.toEqual({
 			echoed: "hello",
 		});
+	});
+
+	it("CVX-F-003 refuses invalid input before the action handler runs", async () => {
+		let handlerCalls = 0;
+		const definition = defineConvexAction({
+			description: "Accept a string",
+			schema: schema<{ value: string }>((value) =>
+				value &&
+				typeof value === "object" &&
+				typeof (value as { value?: unknown }).value === "string"
+					? { value: (value as { value: string }).value }
+					: null,
+			),
+			toolParameters: {
+				type: "object",
+				properties: { value: { type: "string" } },
+				required: ["value"],
+			},
+			run: ({ value }) => {
+				handlerCalls += 1;
+				return value;
+			},
+		});
+
+		await expect(definition.run({ value: 42 } as never, { caller: "mcp" })).rejects.toThrow(
+			"Action input did not match schema",
+		);
+		expect(handlerCalls).toBe(0);
 	});
 
 	it("CVX-F-002 fails closed when the declared output contract is violated", async () => {

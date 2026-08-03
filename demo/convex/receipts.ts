@@ -62,7 +62,12 @@ export const project = internalMutation({
           existing.actionName === args.actionName &&
           existing.caller === args.caller
         ) {
-          return publicReceipt(existing);
+          const replayed = existing.replayed || args.replayed;
+          const updatedAt = Math.max(existing.updatedAt, args.updatedAt);
+          if (replayed !== existing.replayed || updatedAt !== existing.updatedAt) {
+            await ctx.db.patch(existing._id, { replayed, updatedAt });
+          }
+          return publicReceipt({ ...existing, replayed, updatedAt });
         }
         throw new Error("Receipt is already terminal");
       }

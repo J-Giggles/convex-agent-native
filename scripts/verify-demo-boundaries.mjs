@@ -4,16 +4,7 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const sourceExtensions = new Set([
-	".cjs",
-	".cts",
-	".js",
-	".jsx",
-	".mjs",
-	".mts",
-	".ts",
-	".tsx",
-]);
+const sourceExtensions = new Set([".cjs", ".cts", ".js", ".jsx", ".mjs", ".mts", ".ts", ".tsx"]);
 const ignoredDirectories = new Set([
 	".convex",
 	".vite",
@@ -140,7 +131,13 @@ function importedModuleSpecifiers(tokens) {
 }
 
 function isAllowedCapabilitySessionStorageUse(tokens, index, relativeFile) {
-	if (relativeFile.split(path.sep).join("/") !== "src/convexDemoClient.ts") return false;
+	const normalizedFile = relativeFile.split(path.sep).join("/");
+	if (
+		normalizedFile !== "src/convexDemoClient.ts" &&
+		normalizedFile !== "e2e/public-demo.spec.ts"
+	) {
+		return false;
+	}
 	const method = tokens[index + 2];
 	const key = tokens[index + 4];
 	return (
@@ -212,9 +209,7 @@ export async function findDemoBoundaryViolations(repositoryRoot) {
 		]) {
 			for (const packageName of Object.keys(dependencyGroup ?? {}).sort()) {
 				if (isForbiddenPersistencePackage(packageName)) {
-					violations.push(
-						`demo/package.json: forbidden persistence dependency ${packageName}`,
-					);
+					violations.push(`demo/package.json: forbidden persistence dependency ${packageName}`);
 				}
 			}
 		}

@@ -4,17 +4,6 @@ const ALLOWED_ORIGINS = new Set([
   "http://localhost:5173",
 ]);
 
-function normalizedIp(value: string | null): string | null {
-  if (!value) return null;
-  const candidate = value
-    .split(",")
-    .map((entry) => entry.trim())
-    .filter(Boolean)
-    .at(-1);
-  if (!candidate || candidate.length > 64 || !/^[0-9a-f:.]+$/iu.test(candidate)) return null;
-  return candidate.toLowerCase();
-}
-
 export function allowedBootstrapOrigin(request: Request): string {
   const origin = request.headers.get("origin") ?? "";
   if (!ALLOWED_ORIGINS.has(origin)) throw new Error("Demo bootstrap unavailable");
@@ -23,12 +12,7 @@ export function allowedBootstrapOrigin(request: Request): string {
 
 export function resolveBootstrapRequest(request: Request) {
   const allowOrigin = allowedBootstrapOrigin(request);
-  const forwarded = normalizedIp(request.headers.get("x-forwarded-for"));
-  const real = normalizedIp(request.headers.get("x-real-ip"));
-  const cloudflare = normalizedIp(request.headers.get("cf-connecting-ip"));
-  const address = forwarded ?? real ?? cloudflare;
-  if (!address) throw new Error("Demo bootstrap unavailable");
-  return { allowOrigin, provenance: `forwarded:${address}` };
+  return { allowOrigin, provenance: "public-demo-bootstrap:v1" };
 }
 
 export function corsHeaders(origin: string) {

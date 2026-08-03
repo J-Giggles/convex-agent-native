@@ -33,8 +33,12 @@ test("PST-N-001 accepts a Convex-only demo", async () => {
 			'const capability = sessionStorage.getItem("convex-agent-native.demo-capability.v1");',
 			'if (capability) sessionStorage.setItem("convex-agent-native.demo-capability.v1", capability);',
 		].join("\n"),
+		"e2e/public-demo.spec.ts": [
+			'const capability = sessionStorage.getItem("convex-agent-native.demo-capability.v1");',
+			'if (capability) sessionStorage.setItem("convex-agent-native.demo-capability.v1", capability);',
+		].join("\n"),
 		"src/documentation.ts": [
-			'const migrationNote = \'Do not import "drizzle-orm" or use localStorage.\';',
+			"const migrationNote = 'Do not import \"drizzle-orm\" or use localStorage.';",
 			'// import "better-sqlite3"; caches.open("old");',
 			"/* document.cookie and navigator.storage are intentionally forbidden. */",
 			"void migrationNote;",
@@ -111,9 +115,11 @@ test("PST-F-001 refuses session storage outside the anonymous capability adapter
 		"src/convexDemoClient.ts": 'sessionStorage.setItem("tasks", "shadow-copy");',
 		"src/otherClient.ts":
 			'sessionStorage.setItem("convex-agent-native.demo-capability.v1", "misplaced-capability");',
+		"e2e/other.spec.ts": 'sessionStorage.setItem("tasks", "shadow-copy");',
 	});
 
 	assert.deepEqual(await findDemoBoundaryViolations(root), [
+		"demo/e2e/other.spec.ts: forbidden durable browser storage sessionStorage",
 		"demo/src/convexDemoClient.ts: forbidden durable browser storage sessionStorage",
 		"demo/src/otherClient.ts: forbidden durable browser storage sessionStorage",
 	]);

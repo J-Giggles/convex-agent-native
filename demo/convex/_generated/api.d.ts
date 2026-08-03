@@ -16,6 +16,7 @@ import type * as chatAction from "../chatAction.js";
 import type * as direct from "../direct.js";
 import type * as http from "../http.js";
 import type * as httpActions from "../httpActions.js";
+import type * as httpErrors from "../httpErrors.js";
 import type * as mcp from "../mcp.js";
 import type * as quotas from "../quotas.js";
 import type * as receipts from "../receipts.js";
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   direct: typeof direct;
   http: typeof http;
   httpActions: typeof httpActions;
+  httpErrors: typeof httpErrors;
   mcp: typeof mcp;
   quotas: typeof quotas;
   receipts: typeof receipts;

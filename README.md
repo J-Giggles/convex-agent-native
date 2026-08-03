@@ -8,14 +8,14 @@ The compatibility boundary is intentionally narrow: action execution, scoped inv
 
 ## Public agent-first to-do demo
 
-The [live Convex-backed demo](https://j-giggles.github.io/convex-agent-native/) is an independent port of the to-do workflow in Steve Sewell and Builder.io's [How (and why) to build agent-first apps](https://www.builder.io/blog/agent-first-apps). It demonstrates one shared set of Builder-style action definitions across:
+The [live Convex-backed demo](https://j-giggles.github.io/convex-agent-native/) is an independent port of the to-do workflow in Steve Sewell and Builder.io's [How (and why) to build agent-first apps](https://www.builder.io/blog/agent-first-apps). It demonstrates the same module-singleton Builder-style action definition objects across:
 
 - reactive create, edit, complete, reopen, and delete UI flows;
 - a deterministic, zero-model-cost built-in agent;
 - the public MCP endpoint at `https://bold-ant-924.convex.site/mcp`; and
 - direct action HTTP calls at `https://bold-ant-924.convex.site/demo/action`.
 
-Convex is the demo's only persistent database. Anonymous capabilities are isolated per browser session, expire after 24 hours, and never appear in URLs. Reset restores seeded tasks and clears that session's chat, pending confirmations, receipts, and operation state. Hard server-side per-session/provenance and deployment-wide quotas fail closed.
+Convex is the demo's only persistent database. Anonymous capabilities are isolated per browser session, expire after 24 hours, and never appear in URLs. Reset rotates that capability to a fresh Convex action scope, restores seeded tasks, and clears its visible chat, pending confirmation, receipt, and idempotency state while retaining prior audit records durably outside the new scope. Hard server-side per-session and deployment-wide operation quotas fail closed; caller-controlled forwarding headers never select a quota bucket, tasks cap at 200 per session, and public provider-backed model cost is zero.
 
 Provider-backed chat is deliberately disabled in the public deployment. `demo/agent/provider.ts` documents a server-only plug-in seam that requires both an explicit enable flag and a code-registered provider; credentials and provider payloads are never persisted.
 

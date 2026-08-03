@@ -1,4 +1,4 @@
-import type { Task } from "../actions/task-actions.js";
+import { taskActionDefinitions, type Task } from "../actions/task-actions.js";
 import { interpretDemoPrompt, type DeterministicPlan } from "./deterministic.js";
 
 /**
@@ -8,7 +8,11 @@ import { interpretDemoPrompt, type DeterministicPlan } from "./deterministic.js"
  * never be added to this input or to persisted chat messages.
  */
 export interface DemoAgentProvider {
-  plan(prompt: string, tasks: readonly Task[]): Promise<DeterministicPlan>;
+  plan(
+    prompt: string,
+    tasks: readonly Task[],
+    actions: typeof taskActionDefinitions,
+  ): Promise<DeterministicPlan>;
 }
 
 export type DemoAgentProviderRegistry = Readonly<Record<string, DemoAgentProvider>>;
@@ -21,6 +25,14 @@ interface DemoAgentProviderEnvironment {
 const deterministicProvider: DemoAgentProvider = {
   plan: async (prompt, tasks) => interpretDemoPrompt(prompt, tasks),
 };
+
+export function planDemoAgentTurn(
+  provider: DemoAgentProvider,
+  prompt: string,
+  tasks: readonly Task[],
+) {
+  return provider.plan(prompt, tasks, taskActionDefinitions);
+}
 
 /**
  * Deterministic parsing is the fail-closed default. A provider-backed planner

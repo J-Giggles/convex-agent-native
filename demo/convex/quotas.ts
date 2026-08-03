@@ -4,7 +4,7 @@ import { internalMutation, type MutationCtx } from "./_generated/server.js";
 
 const DAY_MS = 86_400_000;
 const QUOTAS = {
-  "session-issue": { limit: 5, windowMs: 3_600_000 },
+  "session-issue": { limit: 100, windowMs: 3_600_000 },
   action: { limit: 60, windowMs: 60_000 },
   chat: { limit: 8, windowMs: 60_000 },
   reset: { limit: 3, windowMs: 3_600_000 },
@@ -47,12 +47,19 @@ export async function consumeQuota(
   const operationKey = `${input.operation}:${input.scopeKey}`;
   const globalKey = "deployment:daily";
   const [operationBucket, globalBucket] = await Promise.all([
-    ctx.db.query("quotaBuckets").withIndex("by_key", (q) => q.eq("key", operationKey)).unique(),
-    ctx.db.query("quotaBuckets").withIndex("by_key", (q) => q.eq("key", globalKey)).unique(),
+    ctx.db
+      .query("quotaBuckets")
+      .withIndex("by_key", (q) => q.eq("key", operationKey))
+      .unique(),
+    ctx.db
+      .query("quotaBuckets")
+      .withIndex("by_key", (q) => q.eq("key", globalKey))
+      .unique(),
   ]);
   const operationStart = bucketStart(input.now, policy.windowMs);
   const globalStart = bucketStart(input.now, DAY_MS);
-  const operationCount = operationBucket?.windowStartedAt === operationStart ? operationBucket.count : 0;
+  const operationCount =
+    operationBucket?.windowStartedAt === operationStart ? operationBucket.count : 0;
   const globalCount = globalBucket?.windowStartedAt === globalStart ? globalBucket.count : 0;
   if (operationCount + input.units > policy.limit || globalCount + input.units > 5_000) {
     throw new Error("Demo quota exceeded");

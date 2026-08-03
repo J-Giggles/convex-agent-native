@@ -75,7 +75,7 @@ export async function handleDemoMcp(
     capability: envelope.capability,
   });
   await ctx.runMutation(internal.quotas.consume, {
-    scopeKey: session.scopeKey,
+    scopeKey: session.quotaKey,
     provenanceDigest: session.provenanceDigest,
     operation: "action",
     units: 1,
@@ -88,9 +88,8 @@ export async function handleDemoMcp(
   });
   const actionName = requestedActionName(envelope.request);
   const operationKey = `${actionName}:${envelope.idempotencyKey ?? "read"}`;
-  const catalog = createTaskActionCatalog(
-    createConvexTaskStore(ctx, scope.scopeKey, operationKey),
-  );
+  const taskStore = createConvexTaskStore(ctx, scope.scopeKey, operationKey);
+  const catalog = createTaskActionCatalog(taskStore);
   const startedAt = Date.now();
   const response = await handleMcpRequest({
     registry: catalog.registry,
@@ -99,9 +98,8 @@ export async function handleDemoMcp(
     request: envelope.request,
     authenticated: true,
     canWrite: true,
-    ...(envelope.idempotencyKey === undefined
-      ? {}
-      : { idempotencyKey: envelope.idempotencyKey }),
+    executionContext: { taskStore },
+    ...(envelope.idempotencyKey === undefined ? {} : { idempotencyKey: envelope.idempotencyKey }),
     serverName: "convex-agent-native-demo",
     serverVersion: "0.1.0",
   });
@@ -115,8 +113,8 @@ export async function handleDemoMcp(
       status: "completed",
       replayed: Boolean(
         response?.result &&
-          typeof response.result === "object" &&
-          (response.result as { _meta?: { replayed?: unknown } })._meta?.replayed,
+        typeof response.result === "object" &&
+        (response.result as { _meta?: { replayed?: unknown } })._meta?.replayed,
       ),
       createdAt: startedAt,
       updatedAt: Date.now(),

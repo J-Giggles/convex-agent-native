@@ -2,7 +2,13 @@ import type { Task, TaskStore } from "../actions/task-actions.js";
 import { v } from "convex/values";
 
 import type { Doc, Id } from "./_generated/dataModel.js";
-import { internalMutation, internalQuery, query, type ActionCtx, type MutationCtx } from "./_generated/server.js";
+import {
+  internalMutation,
+  internalQuery,
+  query,
+  type ActionCtx,
+  type MutationCtx,
+} from "./_generated/server.js";
 import { internal } from "./_generated/api.js";
 import { requireSession } from "./sessions.js";
 
@@ -23,7 +29,11 @@ async function scopedTask(ctx: Pick<MutationCtx, "db">, scopeKey: string, taskId
   return task;
 }
 
-async function priorOperation(ctx: Pick<MutationCtx, "db">, scopeKey: string, operationKey: string) {
+async function priorOperation(
+  ctx: Pick<MutationCtx, "db">,
+  scopeKey: string,
+  operationKey: string,
+) {
   return ctx.db
     .query("taskOperations")
     .withIndex("by_scope_operation", (q) =>
@@ -53,9 +63,15 @@ export const createForAction = internalMutation({
     assertOperationKey(args.operationKey);
     const prior = await priorOperation(ctx, args.scopeKey, args.operationKey);
     if (prior) {
-      if (prior.actionName !== "create-task" || !prior.taskId) throw new Error("Operation conflict");
+      if (prior.actionName !== "create-task" || !prior.taskId)
+        throw new Error("Operation conflict");
       return toTask(await scopedTask(ctx, args.scopeKey, prior.taskId));
     }
+    const existingTasks = await ctx.db
+      .query("tasks")
+      .withIndex("by_scope_order", (q) => q.eq("scopeKey", args.scopeKey))
+      .take(200);
+    if (existingTasks.length >= 200) throw new Error("Task limit reached");
     const last = await ctx.db
       .query("tasks")
       .withIndex("by_scope_order", (q) => q.eq("scopeKey", args.scopeKey))
@@ -94,7 +110,8 @@ export const updateForAction = internalMutation({
     assertOperationKey(args.operationKey);
     const prior = await priorOperation(ctx, args.scopeKey, args.operationKey);
     if (prior) {
-      if (prior.actionName !== "update-task" || prior.taskId !== args.taskId) throw new Error("Operation conflict");
+      if (prior.actionName !== "update-task" || prior.taskId !== args.taskId)
+        throw new Error("Operation conflict");
       return toTask(await scopedTask(ctx, args.scopeKey, args.taskId));
     }
     const task = await scopedTask(ctx, args.scopeKey, args.taskId);
@@ -122,7 +139,8 @@ export const deleteForAction = internalMutation({
     assertOperationKey(args.operationKey);
     const prior = await priorOperation(ctx, args.scopeKey, args.operationKey);
     if (prior) {
-      if (prior.actionName !== "delete-task" || prior.taskId !== args.taskId) throw new Error("Operation conflict");
+      if (prior.actionName !== "delete-task" || prior.taskId !== args.taskId)
+        throw new Error("Operation conflict");
       return { ok: true as const };
     }
     const task = await scopedTask(ctx, args.scopeKey, args.taskId);

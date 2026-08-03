@@ -32,6 +32,7 @@ export interface RegisteredActionToolExecution {
 	readonly networkProtocol?: "a2a" | "mcp" | "provider-api";
 	readonly networkId?: string;
 	readonly networkPeer?: string;
+	readonly executionContext?: unknown;
 }
 
 export interface CreateRegisteredActionToolOptions<Context extends ToolCtx = ToolCtx> {
@@ -70,8 +71,7 @@ export function createRegisteredActionTool<Context extends ToolCtx = ToolCtx>(
 			`Registered action ${options.actionName} requires a Standard Schema to become an agent tool`,
 		);
 	}
-	const isReadOnly =
-		definition.readOnly === true || definition.publicAgent?.readOnly === true;
+	const isReadOnly = definition.readOnly === true || definition.publicAgent?.readOnly === true;
 
 	return createTool({
 		...(options.ctx === undefined ? {} : { ctx: options.ctx }),
@@ -93,8 +93,7 @@ export function createRegisteredActionTool<Context extends ToolCtx = ToolCtx>(
 					undefined
 						? {}
 						: {
-								idempotencyKey:
-									execution.idempotencyKey ?? call.toolCallId,
+								idempotencyKey: execution.idempotencyKey ?? call.toolCallId,
 							}),
 					...(execution.approvedToolCallKey === undefined
 						? {}
@@ -103,9 +102,10 @@ export function createRegisteredActionTool<Context extends ToolCtx = ToolCtx>(
 						? {}
 						: { networkProtocol: execution.networkProtocol }),
 					...(execution.networkId === undefined ? {} : { networkId: execution.networkId }),
-					...(execution.networkPeer === undefined
+					...(execution.networkPeer === undefined ? {} : { networkPeer: execution.networkPeer }),
+					...(execution.executionContext === undefined
 						? {}
-						: { networkPeer: execution.networkPeer }),
+						: { executionContext: execution.executionContext }),
 				},
 				execution.security,
 			);

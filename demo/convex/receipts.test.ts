@@ -69,7 +69,9 @@ describe("bounded durable receipt projection", () => {
       createdAt: 10,
       updatedAt: 11,
     });
-    await expect(t.query(api.receipts.list, { capability: second.capability.token })).resolves.toEqual([]);
+    await expect(
+      t.query(api.receipts.list, { capability: second.capability.token }),
+    ).resolves.toEqual([]);
   });
 
   it("RCP-I-001 never regresses terminal state or projects task content and credentials", async () => {
@@ -92,5 +94,25 @@ describe("bounded durable receipt projection", () => {
       await t.query(api.receipts.list, { capability: capability.token }),
     );
     expect(serialized).not.toMatch(/title|prompt|capability|token|idempotency/iu);
+  });
+
+  it("RCP-I-002 records replay monotonically on an existing terminal receipt", async () => {
+    const t = convexTest(schema, modules);
+    const { capability, scopeKey } = await issue(t, 1);
+    const base = {
+      scopeKey,
+      invocationId: "inv-replayed",
+      actionName: "create-task",
+      caller: "http" as const,
+      status: "completed" as const,
+      createdAt: 10,
+    };
+    await t.mutation(internal.receipts.project, { ...base, replayed: false, updatedAt: 11 });
+    await t.mutation(internal.receipts.project, { ...base, replayed: true, updatedAt: 12 });
+    await t.mutation(internal.receipts.project, { ...base, replayed: false, updatedAt: 13 });
+
+    await expect(t.query(api.receipts.list, { capability: capability.token })).resolves.toEqual([
+      expect.objectContaining({ invocationId: "inv-replayed", replayed: true, updatedAt: 13 }),
+    ]);
   });
 });

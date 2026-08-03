@@ -33,7 +33,7 @@ export async function executeDemoAction(
   });
   if (options.consumeQuota !== false) {
     await ctx.runMutation(internal.quotas.consume, {
-      scopeKey: session.scopeKey,
+      scopeKey: session.quotaKey,
       provenanceDigest: session.provenanceDigest,
       operation: caller === "tool" ? "chat" : "action",
       units: 1,
@@ -46,7 +46,8 @@ export async function executeDemoAction(
     ...(session.organizationId === undefined ? {} : { organizationId: session.organizationId }),
   });
   const operationKey = `${args.actionName}:${args.idempotencyKey ?? "read"}`;
-  const catalog = createTaskActionCatalog(createConvexTaskStore(ctx, scope.scopeKey, operationKey));
+  const taskStore = createConvexTaskStore(ctx, scope.scopeKey, operationKey);
+  const catalog = createTaskActionCatalog(taskStore);
   const startedAt = Date.now();
   const receipt = await executeRegisteredAction(
     catalog.registry,
@@ -56,6 +57,7 @@ export async function executeDemoAction(
       input: args.input,
       caller,
       scope,
+      executionContext: { taskStore },
       ...(args.idempotencyKey === undefined ? {} : { idempotencyKey: args.idempotencyKey }),
       ...(args.approvedToolCallKey === undefined
         ? {}

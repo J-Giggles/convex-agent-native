@@ -44,7 +44,12 @@ export interface UpstreamPublicTypeSnapshot {
 }
 
 export const PUBLIC_API_GROUP_SNAPSHOT = Object.freeze({
-	action: Object.freeze(["ActionRegistry", "defineConvexAction", "executeRegisteredAction"]),
+	action: Object.freeze([
+		"ActionRegistry",
+		"defineConvexAction",
+		"executeRegisteredAction",
+		"readActionExecutionContext",
+	]),
 	agent: Object.freeze(["createRegisteredActionTool"]),
 	client: Object.freeze(["createActionClient", "useConvexActionMutation"]),
 	convex: Object.freeze([

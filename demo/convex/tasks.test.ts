@@ -42,7 +42,9 @@ describe("Convex task persistence", () => {
       title: "Make my demo",
       operationKey: "create-task:task-1",
     });
-    await expect(t.query(api.tasks.list, { capability: capability.token })).resolves.toHaveLength(3);
+    await expect(t.query(api.tasks.list, { capability: capability.token })).resolves.toHaveLength(
+      3,
+    );
   });
 
   it("TSK-F-001 hides task existence across anonymous session scopes", async () => {
@@ -71,7 +73,37 @@ describe("Convex task persistence", () => {
     const first = await t.mutation(internal.tasks.createForAction, input);
     const replay = await t.mutation(internal.tasks.createForAction, input);
     expect(replay.id).toBe(first.id);
-    const tasks = await t.query(api.tasks.list, { capability: capability.token, includeDone: true });
-    expect(tasks.filter(({ title }: { title: string }) => title === "Exactly once")).toHaveLength(1);
+    const tasks = await t.query(api.tasks.list, {
+      capability: capability.token,
+      includeDone: true,
+    });
+    expect(tasks.filter(({ title }: { title: string }) => title === "Exactly once")).toHaveLength(
+      1,
+    );
+  });
+
+  it("TSK-F-002 refuses creation when a session reaches its durable task cap", async () => {
+    const t = convexTest(schema, modules);
+    const { scopeKey } = await issue(t, 1);
+    await t.run(async (ctx) => {
+      for (let index = 2; index < 200; index += 1) {
+        await ctx.db.insert("tasks", {
+          scopeKey,
+          title: `Bounded ${index}`,
+          done: false,
+          sortOrder: index,
+          createdAt: index,
+          updatedAt: index,
+        });
+      }
+    });
+
+    await expect(
+      t.mutation(internal.tasks.createForAction, {
+        scopeKey,
+        title: "One too many",
+        operationKey: "create-task:over-cap",
+      }),
+    ).rejects.toThrow("Task limit reached");
   });
 });
