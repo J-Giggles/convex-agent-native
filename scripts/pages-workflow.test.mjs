@@ -8,6 +8,12 @@ async function workflowSource() {
 	return readFile(workflowUrl, "utf8");
 }
 
+function checkoutSteps(source) {
+	return source
+		.split(/(?=^\s{6}- )/mu)
+		.filter((step) => /uses:\s+actions\/checkout@/u.test(step));
+}
+
 test("DEP-N-001: Pages publishes only the demo/dist static artifact", async () => {
 	const source = await workflowSource();
 
@@ -23,6 +29,10 @@ test("DEP-N-001: Pages publishes only the demo/dist static artifact", async () =
 	assert.match(source, /pnpm --dir demo run build/);
 	assert.match(source, /cache-dependency-path:\s*pnpm-lock\.yaml/);
 	assert.match(source, /path:\s*demo\/dist/);
+	const [checkout, ...extraCheckouts] = checkoutSteps(source);
+	assert.ok(checkout, "Pages must have a checkout step");
+	assert.equal(extraCheckouts.length, 0, "Pages must have exactly one checkout step");
+	assert.match(checkout, /persist-credentials: false/u);
 	assert.match(source, /actions\/deploy-pages@[0-9a-f]{40}/);
 	assert.doesNotMatch(source, /(?:pull_request|workflow_dispatch|push):/);
 	assert.doesNotMatch(source, /run:\s+npm(?:\s|$)|npm --prefix/);

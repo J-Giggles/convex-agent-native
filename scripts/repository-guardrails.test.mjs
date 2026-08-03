@@ -15,6 +15,12 @@ function isIgnored(relativePath) {
 	return result.status === 0;
 }
 
+function checkoutSteps(workflowSource) {
+	return workflowSource
+		.split(/(?=^\s{6}- )/mu)
+		.filter((step) => /uses:\s+actions\/checkout@/u.test(step));
+}
+
 test("repository excludes credentials and generated outputs without excluding public inputs", () => {
 	for (const generatedOrSecret of [
 		".env",
@@ -84,6 +90,11 @@ test("dependency installs are pinned and frozen across every workspace", async (
 	}
 	assert.match(ciSource, /pnpm install --frozen-lockfile --ignore-scripts/);
 	assert.doesNotMatch(ciSource, /npm install --ignore-scripts --no-package-lock/);
+	const ciCheckoutSteps = checkoutSteps(ciSource);
+	assert.equal(ciCheckoutSteps.length, 2, "CI must have exactly two checkout steps");
+	for (const step of ciCheckoutSteps) {
+		assert.match(step, /persist-credentials: false/u);
+	}
 });
 
 test("DEP-I-002: demo deployment rebuilds package subpath artifacts from a clean checkout", async () => {
@@ -93,4 +104,28 @@ test("DEP-I-002: demo deployment rebuilds package subpath artifacts from a clean
 
 	assert.equal(demoPackage.scripts.predeploy, "pnpm --dir .. build");
 	assert.equal(demoPackage.scripts.deploy, "convex deploy --typecheck enable");
+});
+
+test("community and clean-consumer release surfaces remain present", async () => {
+	const requiredFiles = [
+		"CODE_OF_CONDUCT.md",
+		"CONTRIBUTING.md",
+		"GOVERNANCE.md",
+		"SUPPORT.md",
+		"CHANGELOG.md",
+		"docs/getting-started.md",
+		".github/ISSUE_TEMPLATE/bug_report.yml",
+		".github/ISSUE_TEMPLATE/feature_request.yml",
+		".github/ISSUE_TEMPLATE/config.yml",
+		".github/PULL_REQUEST_TEMPLATE.md",
+		"scripts/verify-convex-consumer.mjs",
+	];
+	const sources = await Promise.all(
+		requiredFiles.map((relativePath) => readFile(path.join(repositoryRoot, relativePath), "utf8")),
+	);
+	for (const [index, source] of sources.entries()) {
+		assert.ok(source.trim().length > 0, `${requiredFiles[index]} must not be empty`);
+	}
+	assert.match(sources[5], /Convex `>=1\.39\.1 <2`/u);
+	assert.match(sources[10], /convex\.config\.js/u);
 });

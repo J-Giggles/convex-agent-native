@@ -24,9 +24,9 @@
 	],
 	"residualLicenseAcceptances": [
 		{
-			"packagePattern": "^@img/sharp-libvips-(?:linux|linuxmusl)-",
+			"packagePattern": "^@img/sharp-libvips-(?:darwin|linux|linuxmusl)-",
 			"license": "LGPL-3.0-or-later",
-			"reason": "Optional @agent-native/core image tooling dynamically loads the unmodified libvips shared library; it is not bundled by this package."
+			"reason": "Optional @agent-native/core image tooling dynamically loads the unmodified platform-specific libvips shared library; it is not bundled by this package."
 		},
 		{
 			"packagePattern": "^@img/sharp-wasm32$",

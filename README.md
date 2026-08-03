@@ -6,6 +6,32 @@ The compatibility boundary is intentionally narrow: action execution, scoped inv
 
 [Agent-Native](https://agent-native.com/) is created and maintained by [Builder.io](https://www.builder.io/), with official source at [BuilderIO/agent-native](https://github.com/BuilderIO/agent-native). This independent interoperability project is not affiliated with, endorsed by, or sponsored by Builder.io or the Agent-Native project; compatibility names are used only to describe public contracts.
 
+## Install in an existing Convex app
+
+The package can be mounted in any app using Convex `>=1.39.1 <2` on Node.js `>=22.22 <27`:
+
+```sh
+npm install @giggabit/agent-native-convex @convex-dev/agent convex
+```
+
+Add the component to `convex/convex.config.ts`:
+
+```ts
+import agentNative from "@giggabit/agent-native-convex/convex.config.js";
+import { defineApp } from "convex/server";
+
+const app = defineApp();
+app.use(agentNative, {
+  name: "agentNative",
+  env: { HOST_SCOPE_POLICY: "host-derived-v1" },
+});
+export default app;
+```
+
+Then run `npx convex dev`. Convex generates `components.agentNative`, which host functions pass to `createConvexPersistence`. The policy setting is deliberate: the package never accepts a browser-provided tenant or authorization scope.
+
+See the [copy-paste getting-started guide](docs/getting-started.md) for the first action, component wiring, supported environments, and upgrade notes.
+
 ## Public agent-first to-do demo
 
 The [live Convex-backed demo](https://j-giggles.github.io/convex-agent-native/) is an independent port of the to-do workflow in Steve Sewell and Builder.io's [How (and why) to build agent-first apps](https://www.builder.io/blog/agent-first-apps). It demonstrates the same module-singleton Builder-style action definition objects across:
@@ -36,6 +62,8 @@ The demo lifecycle builds the package first, so package and component subpath de
 Use Node.js 22.22 or newer and pnpm. Install dependencies, run the package tests, type-check, and build before creating a package tarball. The example is designed to use Convex as its only persistent database.
 
 Never commit deployment credentials. Configuration belongs in the host environment, and action inputs must not be used to select authorization scope.
+
+New contributors are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md), ask usage and design questions in [GitHub Discussions](https://github.com/J-Giggles/convex-agent-native/discussions), and report security concerns through a [private security advisory](https://github.com/J-Giggles/convex-agent-native/security/advisories/new).
 
 ## Convex agent tools
 

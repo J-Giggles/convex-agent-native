@@ -1,0 +1,63 @@
+name: Bug report
+description: Report a reproducible problem in the package, component, or demo.
+title: "[Bug]: "
+labels: [bug, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve the project. Remove secrets and production data before submitting.
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: 0.1.1
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Convex and Node.js versions
+      placeholder: Convex 1.43.0, Node.js 22.22.0
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      options:
+        - Convex component or persistence
+        - Action registry or execution
+        - Agent or AI SDK tools
+        - MCP, A2A, CLI, or browser client
+        - Public demo
+        - Packaging, types, or documentation
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Link a small repository or provide the smallest secret-free code and commands that reproduce the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed credentials, personal data, private prompts, and production payloads.
+          required: true
+        - label: This report does not describe a vulnerability that should be submitted privately.
+          required: true

@@ -2,7 +2,7 @@
 
 This example keeps counters, idempotent action invocations, thread ownership, messages, and streaming deltas in one Convex deployment. It uses public Agent-Native action contracts and the official Convex Agent component.
 
-Install `@giggabit/agent-native-convex`, `@agent-native/core`, `@convex-dev/agent`, and the model-provider packages selected by the host application. Copy the `convex/` and `client/` directories into a Convex app, configure its normal authentication provider, and generate the app's Convex references.
+Install `@giggabit/agent-native-convex`, `@agent-native/core`, `@convex-dev/agent`, and the model-provider packages selected by the host application. Follow the repository's [getting-started guide](../docs/getting-started.md) to mount the npm component, then adapt the `convex/` and `client/` examples to the host's authentication model and generate its Convex references.
 
 Every public function derives its scope from verified authentication claims. The action mutation validates its definition, binds idempotency and counter changes to that scope, and refuses client-selected scope identifiers. Thread queries reauthorize before returning messages or streaming deltas.
 

@@ -1,6 +1,6 @@
 {
 	"name": "@giggabit/agent-native-convex",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"packageManager": "pnpm@10.24.0",
 	"pnpm": {
 		"onlyBuiltDependencies": ["better-sqlite3"]
@@ -26,7 +26,13 @@
 		"!src/component/**/*.test.ts",
 		"LICENSE",
 		"README.md",
+		"CHANGELOG.md",
+		"CODE_OF_CONDUCT.md",
+		"CONTRIBUTING.md",
 		"SECURITY.md",
+		"SUPPORT.md",
+		"docs/compatibility.md",
+		"docs/getting-started.md",
 		"THIRD_PARTY_NOTICES.md"
 	],
 	"exports": {
@@ -112,6 +118,7 @@
 		"pretest": "node scripts/verify-demo-boundaries.mjs",
 		"test": "vitest run",
 		"test:guardrails": "node --test scripts/repository-guardrails.test.mjs scripts/verify-demo-boundaries.test.mjs scripts/verify-demo-deployment.test.mjs scripts/pages-workflow.test.mjs scripts/convex-runtime-boundary.test.mjs",
+		"test:convex-consumer": "node scripts/verify-convex-consumer.mjs",
 		"test:watch": "vitest",
 		"prepack": "node scripts/build.mjs",
 		"pack:check": "node scripts/verify-release.mjs --pack-only",
