@@ -51,6 +51,11 @@ test("dependency installs are pinned and frozen across every workspace", async (
 		rootPackage.files.includes("!scripts/**/*.test.mjs"),
 		"repository-only script tests must not enter the public package",
 	);
+	assert.deepEqual(
+		rootPackage.pnpm?.onlyBuiltDependencies,
+		["better-sqlite3"],
+		"only the reviewed root SQLite test binding may run lifecycle scripts",
+	);
 	assert.doesNotMatch(workspaceSource, /exclude:/);
 	for (const workspace of ['"."', '"demo"', '"example"']) {
 		assert.match(workspaceSource, new RegExp(`- ${workspace.replaceAll(".", "\\.")}`));

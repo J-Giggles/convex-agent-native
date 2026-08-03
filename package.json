@@ -2,6 +2,9 @@
 	"name": "@giggabit/agent-native-convex",
 	"version": "0.1.0",
 	"packageManager": "pnpm@10.24.0",
+	"pnpm": {
+		"onlyBuiltDependencies": ["better-sqlite3"]
+	},
 	"private": false,
 	"description": "Independent Convex-native compatibility adapters for public Agent-Native contracts",
 	"type": "module",
