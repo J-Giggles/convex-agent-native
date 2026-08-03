@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-08-03T12:09:00+01:00",
+  "status": "release-candidate-verified",
+  "acceptedPlan": {
+    "revision": "b4fb88d2",
+    "sha256": "b4fb88d2a8026663de4ab82126adb47f5365d951d534b3ac27f4d52b3fb30223",
+    "url": "https://giggabit-server.tailfb378a.ts.net/reports/convex-agent-native-builder-demo-plan.html"
+  },
+  "source": {
+    "commit": "0602fa9337ca325f7787f5d930921031f1783005",
+    "upstreamReferenceCommit": "0b77b79d675ef18fad8279ed1921b48ed7c25358"
+  },
+  "deployment": {
+    "convexUrl": "https://bold-ant-924.convex.cloud",
+    "convexSiteUrl": "https://bold-ant-924.convex.site",
+    "pagesUrl": "https://j-giggles.github.io/convex-agent-native/"
+  },
+  "automatedChecks": {
+    "rootTests": "85/85 passed",
+    "demoTests": "55/55 passed without React act warnings",
+    "guardrails": "16/16 passed",
+    "rootTypecheck": "passed",
+    "demoTypecheckFromCleanBuild": "passed",
+    "demoProductionBuild": "passed",
+    "rootBuild": {
+      "artifacts": 116,
+      "sha256": "320193bcaa430cbedfa3c3009de4fc8ffefd5f4fc643649eeaf42b45f108dd8e"
+    },
+    "releaseVerification": {
+      "packageFiles": 145,
+      "packageSha512": "efC37Qty2QBg5azeqJVgPFL5/ElHLWQ3pH9aDSVpWAqqOaHwVrv0w/HqlX27HxKutDe1gLWisOqL8z64RAEeJg==",
+      "packageShortSha": "d9b275afaca965712b54b87a3772060935e44bc2",
+      "minimalConsumerPackages": 6,
+      "runtimeExports": 19
+    },
+    "mcpHttpProductionTransport": "passed",
+    "twoBrowserRealtime": "UI-I-002 passed in 5.5 seconds"
+  },
+  "evidence": {
+    "directory": "/home/jgigg/fleet-reports/convex-agent-native-builder-demo/pre-release-final-pass",
+    "manifest": "verification-manifest.json",
+    "primaryVideoSha256": "ac6781299ab123fedc7999e5bee8bdffe7ef3ea6cc8c742709fef1e29b887094",
+    "secondSessionVideoSha256": "a4e4b6e4962ec2bc2511037aeb059973d85699712cc287f802303062e443549a",
+    "secretScan": "passed"
+  },
+  "independentReview": {
+    "standards": "CLEAR",
+    "verification": "ACCEPT",
+    "blockers": []
+  }
+}
