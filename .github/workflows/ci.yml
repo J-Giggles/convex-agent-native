@@ -19,20 +19,28 @@ jobs:
         node: ["22.22.0", "24.x", "26.x"]
         react: ["19.2.7"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        with:
+          version: 10.24.0
+          run_install: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node }}
-      - run: npm install --ignore-scripts --no-package-lock
-      - run: npm run typecheck
-      - run: npm run release:verify
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm run typecheck
+      - run: pnpm run release:verify
         env:
           REACT_VERSION: ${{ matrix.react }}
       - name: Enable reviewed SQLite test binding
-        run: npm rebuild better-sqlite3
-      - run: npm test
-      - run: npm run build
-      - run: npm --prefix example install --ignore-scripts --no-package-lock --install-links
-      - run: npm --prefix example run build
-      - run: npm --prefix example test
-      - run: npm run clean
+        run: pnpm rebuild better-sqlite3
+      - run: pnpm test
+      - run: pnpm run test:guardrails
+      - run: pnpm run build
+      - run: pnpm --dir example run build
+      - run: pnpm --dir example test
+      - run: pnpm --dir demo run typecheck
+      - run: pnpm --dir demo test
+      - run: pnpm run clean

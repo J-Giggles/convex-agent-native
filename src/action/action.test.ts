@@ -11,6 +11,7 @@ import type {
 } from "../persistence/invocations.js";
 import { testSchema as z } from "../test/standard-schema.js";
 import { executeRegisteredAction } from "./execute.js";
+import { readActionExecutionContext } from "./execution-context.js";
 import { ActionRegistry } from "./registry.js";
 import {
 	actionReplayDigest,
@@ -98,6 +99,27 @@ class MemoryInvocations implements InvocationPersistence {
 const scope = resolveActionScope({ scopeKey: "org:acme", subjectId: "user:1" });
 
 describe("action registry and execution", () => {
+	it("ACT-N06 supplies host-owned execution data to one reusable action definition", async () => {
+		const hostContext = { store: "trusted" };
+		const action = defineAction({
+			description: "Read host execution data",
+			schema: z.object({}),
+			audit: { enabled: false },
+			readOnly: true,
+			run: (_input, context) => readActionExecutionContext(context),
+		});
+		const registry = new ActionRegistry().register("read-host-context", action);
+
+		await expect(
+			executeRegisteredAction(registry, new MemoryInvocations(), {
+				actionName: "read-host-context",
+				input: { executionContext: "attacker" },
+				caller: "frontend",
+				scope,
+				executionContext: hostContext,
+			}),
+		).resolves.toMatchObject({ result: hostContext });
+	});
 	it("ACT-N01 validates and executes an official action definition", async () => {
 		const run = vi.fn(({ amount }: { amount: number }) => ({ value: amount + 1 }));
 		const action = defineAction({

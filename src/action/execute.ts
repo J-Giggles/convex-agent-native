@@ -7,6 +7,7 @@ import { isAuthenticatedExtensionRequest } from "../internal/extension-caller.js
 import type { InvocationPersistence, InvocationRecord } from "../persistence/invocations.js";
 import type { ActionPolicyContext, ActionRegistry } from "./registry.js";
 import { fingerprintActionInput } from "./fingerprint.js";
+import { attachActionExecutionContext } from "./execution-context.js";
 import { assertSafePersistedValue, sanitizeErrorMessage } from "./sanitize.js";
 
 export type ActionSurface = ActionRunContext["caller"] | "extension";
@@ -21,6 +22,8 @@ export interface ExecuteRegisteredActionRequest {
 	networkProtocol?: "a2a" | "mcp" | "provider-api";
 	networkId?: string;
 	networkPeer?: string;
+	/** Trusted per-invocation host data; never derived from action input or persisted. */
+	executionContext?: unknown;
 }
 
 export interface ExecuteRegisteredActionResult {
@@ -196,6 +199,9 @@ export async function executeRegisteredAction(
 		...(request.networkId === undefined ? {} : { networkId: request.networkId }),
 		...(request.networkPeer === undefined ? {} : { networkPeer: request.networkPeer }),
 	};
+	if (request.executionContext !== undefined) {
+		attachActionExecutionContext(context as ActionRunContext, request.executionContext);
+	}
 
 	const approvalRequired =
 		definition.publicAgent?.isConsequential === true ||

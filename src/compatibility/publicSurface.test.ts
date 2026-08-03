@@ -3,6 +3,7 @@ import type { ComponentApi as AgentComponentApi } from "@convex-dev/agent/_gener
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 import * as action from "../action/index.js";
+import * as agent from "../agent/index.js";
 import * as client from "../client/index.js";
 import type { ComponentApi } from "../component/_generated/component.js";
 import * as convex from "../convex/index.js";
@@ -14,7 +15,7 @@ import { PUBLIC_API_GROUP_SNAPSHOT, type UpstreamPublicTypeSnapshot } from "./pu
 describe("public API and upstream compile snapshots", () => {
 	it("CT-N01 snapshots every promised public symbol group", () => {
 		for (const [group, symbols] of Object.entries(PUBLIC_API_GROUP_SNAPSHOT)) {
-			const api = { action, client, convex, extensions, protocols }[
+			const api = { action, agent, client, convex, extensions, protocols }[
 				group as keyof typeof PUBLIC_API_GROUP_SNAPSHOT
 			];
 			for (const symbol of symbols) expect(api).toHaveProperty(symbol);

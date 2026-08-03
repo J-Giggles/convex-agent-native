@@ -63,6 +63,8 @@ export interface HandleMcpRequestOptions extends Partial<McpAccessContext> {
 	idempotencyKey?: string;
 	approvedToolCallKey?: string;
 	approvalVerifier?: ApprovalVerifier;
+	/** Trusted host data made available to the selected action definition only while it runs. */
+	executionContext?: unknown;
 	serverName?: string;
 	serverVersion?: string;
 }
@@ -299,6 +301,9 @@ export async function handleMcpRequest(
 				...(options.approvedToolCallKey === undefined
 					? {}
 					: { approvedToolCallKey: options.approvedToolCallKey }),
+				...(options.executionContext === undefined
+					? {}
+					: { executionContext: options.executionContext }),
 			},
 			{
 				...(options.approvalVerifier === undefined

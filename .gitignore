@@ -1,0 +1,32 @@
+# Dependencies and package-manager caches
+node_modules/
+.npm/
+.pnpm-store/
+
+# Local credentials and deployment configuration
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.local
+
+# Generated builds and compiler state
+dist/
+coverage/
+*.tsbuildinfo
+*.tgz
+.vite/
+
+# Convex local deployment state (generated clients remain trackable)
+.convex/
+
+# Browser-test output
+playwright-report/
+test-results/
+blob-report/
+
+# Logs and editor/OS state
+*.log
+.DS_Store
+.idea/
+.vscode/
