@@ -8,7 +8,7 @@
     "url": "https://giggabit-server.tailfb378a.ts.net/reports/convex-agent-native-builder-demo-plan.html"
   },
   "source": {
-    "commit": "0602fa9337ca325f7787f5d930921031f1783005",
+    "commit": "06419f663a318c8d0a1bfc24668da8cf2153c8e1",
     "upstreamReferenceCommit": "0b77b79d675ef18fad8279ed1921b48ed7c25358"
   },
   "deployment": {
@@ -19,7 +19,7 @@
   "automatedChecks": {
     "rootTests": "85/85 passed",
     "demoTests": "55/55 passed without React act warnings",
-    "guardrails": "16/16 passed",
+    "guardrails": "17/17 passed",
     "rootTypecheck": "passed",
     "demoTypecheckFromCleanBuild": "passed",
     "demoProductionBuild": "passed",
