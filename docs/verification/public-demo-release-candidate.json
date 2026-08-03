@@ -8,7 +8,7 @@
     "url": "https://giggabit-server.tailfb378a.ts.net/reports/convex-agent-native-builder-demo-plan.html"
   },
   "source": {
-    "commit": "06419f663a318c8d0a1bfc24668da8cf2153c8e1",
+    "commit": "0ac1c0710c087d6fd5e490fc3201cf02d01dab10",
     "upstreamReferenceCommit": "0b77b79d675ef18fad8279ed1921b48ed7c25358"
   },
   "deployment": {
@@ -29,8 +29,8 @@
     },
     "releaseVerification": {
       "packageFiles": 145,
-      "packageSha512": "efC37Qty2QBg5azeqJVgPFL5/ElHLWQ3pH9aDSVpWAqqOaHwVrv0w/HqlX27HxKutDe1gLWisOqL8z64RAEeJg==",
-      "packageShortSha": "d9b275afaca965712b54b87a3772060935e44bc2",
+      "packageSha512": "UF+Zm8qWCQ0jHfF4kKQHFEKkkGHih0jvOer0hm5ukkAXbpMAr4GQWyrn5BwZMhktEZysGpE+nSPBTxzVPxdAVA==",
+      "packageShortSha": "12b549f2a09b4c587080d336a521ba185cce12b6",
       "minimalConsumerPackages": 6,
       "runtimeExports": 19
     },
