@@ -64,3 +64,12 @@ test("dependency installs are pinned and frozen across every workspace", async (
 	assert.match(ciSource, /pnpm install --frozen-lockfile --ignore-scripts/);
 	assert.doesNotMatch(ciSource, /npm install --ignore-scripts --no-package-lock/);
 });
+
+test("DEP-I-002: demo deployment rebuilds package subpath artifacts from a clean checkout", async () => {
+	const demoPackage = JSON.parse(
+		await readFile(path.join(repositoryRoot, "demo/package.json"), "utf8"),
+	);
+
+	assert.equal(demoPackage.scripts.predeploy, "pnpm --dir .. build");
+	assert.equal(demoPackage.scripts.deploy, "convex deploy --typecheck enable");
+});

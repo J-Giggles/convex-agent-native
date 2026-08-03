@@ -6,6 +6,8 @@
   "scripts": {
     "prebuild": "pnpm --dir .. build",
     "build": "tsc --noEmit -p tsconfig.json && vite build",
+    "predeploy": "pnpm --dir .. build",
+    "deploy": "convex deploy --typecheck enable",
     "pretest": "pnpm --dir .. build",
     "test": "vitest run",
     "test:e2e": "playwright test",
