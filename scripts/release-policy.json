@@ -42,6 +42,16 @@
 			"packagePattern": "^@builder\\.io/ai-utils$",
 			"license": "UNKNOWN",
 			"reason": "Optional @agent-native/core transitive package; registry metadata omits its declared license and this exact residual is machine isolated."
+		},
+		{
+			"packagePattern": "^@sentry/cli(?:-linux-x64|-linux-arm64|-linux-i686|-darwin|-win32-x64|-win32-i386|-linux-arm)?$",
+			"license": "FSL-1.1-MIT",
+			"reason": "Optional @agent-native/core transitive build tooling under the Functional Source License; it is a developer CLI that is never bundled, loaded, or invoked by this package."
+		},
+		{
+			"packagePattern": "^xml-escape$",
+			"license": "MIT License",
+			"reason": "Optional @agent-native/core transitive package whose registry metadata spells the MIT license as a non-SPDX string."
 		}
 	],
 	"allowedLifecycleScripts": [
@@ -62,32 +72,50 @@
 			"stage": "postinstall",
 			"commandSha256": "98fb33e3d0a9e234d54789dfc7b8af34e8309bb6a45b1c26dff75272aad32185",
 			"reason": "Optional upstream OCR sponsorship message; installation is disabled and OCR is not loaded by this package."
+		},
+		{
+			"package": "@sentry/cli@2.58.6",
+			"stage": "postinstall",
+			"commandSha256": "e8d389f3116b70488031adf8aba2d570bfcad5ae8e67d8ccc74199f0b4cb6733",
+			"reason": "Optional @agent-native/core transitive binary download; installation is disabled and this package does not load it."
+		},
+		{
+			"package": "@vgpu/adapter-node@0.3.1",
+			"stage": "postinstall",
+			"commandSha256": "2aeb888a3732f0165ff0e48c3feb210b49842761ee28c81f65259fb0889ff774",
+			"reason": "Optional @agent-native/core transitive GPU adapter; installation is disabled and this package does not load it."
+		},
+		{
+			"package": "webgpu@0.4.0",
+			"stage": "postinstall",
+			"commandSha256": "39197a24d5a365f8abfe2df9a9af14a060cfdd28d089805d3d9c14fae57adf7d",
+			"reason": "Optional @agent-native/core transitive GPU binding; installation is disabled and this package does not load it."
 		}
 	],
 	"unreachableHighAdvisories": [
 		{
-			"package": "better-auth",
-			"version": "1.6.16",
-			"source": 1124303,
-			"reason": "Optional @agent-native/core authentication implementation is outside the adapter's type-only peer and independently implemented AgentCard runtime module."
+			"package": "@tiptap/core",
+			"version": "3.30.1",
+			"source": 1193728,
+			"reason": "Optional @agent-native/core transitive rich-text editor dependency; this package emits no @agent-native/core runtime import and never loads it."
 		},
 		{
-			"package": "undici",
-			"version": "5.29.0",
-			"source": 1114638,
-			"reason": "Optional @convex-dev/agent provider utility; this package imports only its side-effect-free convex.config subpath, which depends directly on convex/server and does not load provider utilities or WebSocket code."
+			"package": "pdfjs-dist",
+			"version": "6.1.200",
+			"source": 1138116,
+			"reason": "Optional @agent-native/core transitive PDF ingestion dependency; this package emits no @agent-native/core runtime import and never loads it."
 		},
 		{
-			"package": "undici",
-			"version": "5.29.0",
-			"source": 1114640,
-			"reason": "Optional @convex-dev/agent provider utility; this package imports only its side-effect-free convex.config subpath, which depends directly on convex/server and does not load provider utilities or WebSocket code."
+			"package": "xlsx",
+			"version": "0.18.5",
+			"source": 1108110,
+			"reason": "Optional @agent-native/core transitive spreadsheet ingestion dependency; this package emits no @agent-native/core runtime import and never loads it."
 		},
 		{
-			"package": "undici",
-			"version": "5.29.0",
-			"source": 1121245,
-			"reason": "Optional @convex-dev/agent provider utility; this package imports only its side-effect-free convex.config subpath, which depends directly on convex/server and does not load provider utilities or WebSocket code."
+			"package": "xlsx",
+			"version": "0.18.5",
+			"source": 1108111,
+			"reason": "Optional @agent-native/core transitive spreadsheet ingestion dependency; this package emits no @agent-native/core runtime import and never loads it."
 		}
 	]
 }
