@@ -28,10 +28,12 @@ export function isExposedToInAppAgent(definition: ExposureFlags): boolean {
 
 /**
  * Whether external agents (MCP, WebMCP, direct A2A) may see the action. Mirrors
- * upstream 0.170 and 0.177: `mcpTool` inherits `agentTool` and can only narrow
- * it, and an `endsTurn` action stays in-app unless it opts back in with
- * `mcpTool: true`. The package additionally keeps its explicit `publicAgent`
- * opt-in and the extension `toolCallable` gate.
+ * upstream 0.170 and 0.177: an explicit `mcpTool` decides external exposure on
+ * its own, an unset `mcpTool` inherits `agentTool`, and an `endsTurn` action
+ * stays in-app unless it opts back in with `mcpTool: true`. So `agentTool:
+ * false` with `mcpTool: true` is an external-only action, while `uiOnly`
+ * hides the action everywhere. The package additionally keeps its explicit
+ * `publicAgent` opt-in and the extension `toolCallable` gate.
  */
 export function isExposedToExternalAgents(definition: ExposureFlags): boolean {
 	if (definition.uiOnly === true) return false;

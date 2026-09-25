@@ -26,7 +26,7 @@ export interface DefineConvexActionOptions<
 	/** Hide from every agent surface; UI, HTTP and CLI keep the action. */
 	readonly uiOnly?: boolean;
 	readonly agentTool?: boolean;
-	/** External-agent exposure; inherits `agentTool` and can only narrow it. */
+	/** External-agent exposure; unset inherits `agentTool`, explicit wins on its own. */
 	readonly mcpTool?: boolean;
 	/** In-app only unless `mcpTool: true`; a successful call hands the turn back. */
 	readonly endsTurn?: boolean;
@@ -42,6 +42,15 @@ export interface DefineConvexActionOptions<
 		StandardSchemaV1.InferOutput<TSchema>,
 		TResult
 	>["needsApproval"];
+}
+
+/** Same normalisation `resolveActionScope` applies to granted scopes. */
+function normalizeCapabilityScopes(scopes: readonly string[]): readonly string[] {
+	const normalized = [...new Set(scopes.map((scope) => scope.trim()))].sort();
+	if (normalized.some((scope) => !scope || scope.length > 128)) {
+		throw new Error("capabilityScopes must be non-empty strings of at most 128 characters");
+	}
+	return Object.freeze(normalized);
 }
 
 /**
@@ -94,7 +103,7 @@ export function defineConvexAction<
 		...(options.deferLoading === undefined ? {} : { deferLoading: options.deferLoading }),
 		...(options.capabilityScopes === undefined
 			? {}
-			: { capabilityScopes: Object.freeze([...options.capabilityScopes]) }),
+			: { capabilityScopes: normalizeCapabilityScopes(options.capabilityScopes) }),
 		...(options.allowPersistentApproval === undefined
 			? {}
 			: { allowPersistentApproval: options.allowPersistentApproval }),

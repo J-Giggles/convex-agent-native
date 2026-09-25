@@ -89,6 +89,12 @@ describe("upstream 0.189 exposure rules", () => {
 		expect(isExposedToExternalAgents(definition)).toBe(false);
 	});
 
+	it("agentTool: false with mcpTool: true is an external-only action", () => {
+		const definition = readAction({ agentTool: false, mcpTool: true });
+		expect(isExposedToInAppAgent(definition)).toBe(false);
+		expect(isExposedToExternalAgents(definition)).toBe(true);
+	});
+
 	it("uiOnly hides the action from every agent surface", () => {
 		const definition = readAction({ uiOnly: true });
 		expect(isExposedToInAppAgent(definition)).toBe(false);
@@ -143,6 +149,27 @@ describe("upstream 0.189 capability scopes", () => {
 			run: () => ({ ok: true }),
 		}),
 	);
+
+	it("normalises declared scopes the way granted scopes are normalised", () => {
+		const definition = defineConvexAction({
+			description: "Padded scopes",
+			schema: z.object({}),
+			toolParameters: { type: "object", properties: {} },
+			readOnly: true,
+			capabilityScopes: [" ledger:read ", "ledger:read"],
+			run: () => ({ ok: true }),
+		});
+		expect(definition.capabilityScopes).toEqual(["ledger:read"]);
+		expect(() =>
+			defineConvexAction({
+				description: "Blank scope",
+				schema: z.object({}),
+				toolParameters: { type: "object", properties: {} },
+				capabilityScopes: [" "],
+				run: () => ({ ok: true }),
+			}),
+		).toThrow(/capabilityScopes/u);
+	});
 
 	it("fails closed when the resolved scope carries no granted scopes", async () => {
 		await expect(
