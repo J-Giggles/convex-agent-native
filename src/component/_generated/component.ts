@@ -17,6 +17,7 @@ type ActionCaller =
 	| "cli"
 	| "mcp"
 	| "a2a"
+	| "webmcp"
 	| "automation"
 	| "extension";
 type InvocationStatus = "running" | "completed" | "failed";

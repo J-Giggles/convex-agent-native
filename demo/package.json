@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@agent-native/core": "0.133.2",
+    "@agent-native/core": "0.189.0",
     "@giggabit/agent-native-convex": "link:..",
     "convex": "1.43.0",
     "react": "19.2.8",

@@ -1,6 +1,6 @@
 {
 	"name": "@giggabit/agent-native-convex",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"packageManager": "pnpm@10.24.0",
 	"pnpm": {
 		"onlyBuiltDependencies": ["better-sqlite3"]
@@ -128,7 +128,7 @@
 		"@standard-schema/spec": "^1.1.0"
 	},
 	"peerDependencies": {
-		"@agent-native/core": "^0.133.2",
+		"@agent-native/core": "^0.189.0",
 		"@convex-dev/agent": "^0.6.4",
 		"convex": ">=1.39.1 <2",
 		"drizzle-orm": ">=0.45.2 <1",
@@ -149,7 +149,7 @@
 		}
 	},
 	"devDependencies": {
-		"@agent-native/core": "0.133.2",
+		"@agent-native/core": "0.189.0",
 		"@convex-dev/agent": "0.6.4",
 		"@types/better-sqlite3": "^7.6.13",
 		"@types/node": "^22.0.0",

@@ -1,9 +1,9 @@
 export const AGENT_NATIVE_CONVEX_COMPATIBILITY = Object.freeze({
-	specificationVersion: "0.1.0-draft.1",
+	specificationVersion: "0.2.0-draft.1",
 	agentNative: Object.freeze({
 		package: "@agent-native/core",
-		version: "0.133.2",
-		commit: "0546d440276abe565ad58b816d5ee58c0d0dabf4",
+		version: "0.189.0",
+		commit: "089a5a96f4a882c0fc9e5d4abca8f8fc32f7ef85",
 	}),
 	convexAgent: Object.freeze({
 		package: "@convex-dev/agent",

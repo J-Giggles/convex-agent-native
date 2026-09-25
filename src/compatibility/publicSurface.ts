@@ -47,7 +47,11 @@ export const PUBLIC_API_GROUP_SNAPSHOT = Object.freeze({
 	action: Object.freeze([
 		"ActionRegistry",
 		"defineConvexAction",
+		"deriveApprovalKey",
 		"executeRegisteredAction",
+		"isExposedToExternalAgents",
+		"isExposedToInAppAgent",
+		"normalizeToolParameters",
 		"readActionExecutionContext",
 	]),
 	agent: Object.freeze(["createRegisteredActionTool"]),

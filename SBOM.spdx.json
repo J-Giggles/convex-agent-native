@@ -14,7 +14,7 @@
     {
       "SPDXID": "SPDXRef-Package--giggabit-agent-native-convex",
       "name": "@giggabit/agent-native-convex",
-      "versionInfo": "0.1.0",
+      "versionInfo": "0.2.0",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "MIT",
@@ -23,7 +23,7 @@
     {
       "SPDXID": "SPDXRef-Dependency--agent-native-core",
       "name": "@agent-native/core",
-      "versionInfo": "^0.133.2",
+      "versionInfo": "^0.189.0",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "MIT",

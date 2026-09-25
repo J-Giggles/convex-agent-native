@@ -23,10 +23,21 @@ export interface DefineConvexActionOptions<
 	readonly audit?: ActionDefinition<unknown, unknown>["audit"];
 	readonly http?: ActionDefinition<unknown, unknown>["http"];
 	readonly requiresAuth?: boolean;
+	/** Hide from every agent surface; UI, HTTP and CLI keep the action. */
+	readonly uiOnly?: boolean;
 	readonly agentTool?: boolean;
+	/** External-agent exposure; inherits `agentTool` and can only narrow it. */
+	readonly mcpTool?: boolean;
+	/** In-app only unless `mcpTool: true`; a successful call hands the turn back. */
+	readonly endsTurn?: boolean;
+	readonly deferLoading?: boolean;
 	readonly readOnly?: boolean;
 	readonly toolCallable?: boolean;
+	/** Capability scopes the resolved scope must carry before this action runs. */
+	readonly capabilityScopes?: readonly string[];
 	readonly publicAgent?: ActionDefinition<unknown, unknown>["publicAgent"];
+	/** Allow a standing approval grant to satisfy `needsApproval`. Defaults false here. */
+	readonly allowPersistentApproval?: boolean;
 	readonly needsApproval?: ActionDefinition<
 		StandardSchemaV1.InferOutput<TSchema>,
 		TResult
@@ -76,7 +87,17 @@ export function defineConvexAction<
 		...(options.audit === undefined ? {} : { audit: options.audit }),
 		...(options.http === undefined ? {} : { http: options.http }),
 		...(options.requiresAuth === undefined ? {} : { requiresAuth: options.requiresAuth }),
+		...(options.uiOnly === undefined ? {} : { uiOnly: options.uiOnly }),
 		...(options.agentTool === undefined ? {} : { agentTool: options.agentTool }),
+		...(options.mcpTool === undefined ? {} : { mcpTool: options.mcpTool }),
+		...(options.endsTurn === undefined ? {} : { endsTurn: options.endsTurn }),
+		...(options.deferLoading === undefined ? {} : { deferLoading: options.deferLoading }),
+		...(options.capabilityScopes === undefined
+			? {}
+			: { capabilityScopes: Object.freeze([...options.capabilityScopes]) }),
+		...(options.allowPersistentApproval === undefined
+			? {}
+			: { allowPersistentApproval: options.allowPersistentApproval }),
 		...(options.readOnly === undefined ? {} : { readOnly: options.readOnly }),
 		...(options.toolCallable === undefined ? {} : { toolCallable: options.toolCallable }),
 		...(options.publicAgent === undefined ? {} : { publicAgent: options.publicAgent }),

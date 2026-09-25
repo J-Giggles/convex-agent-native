@@ -58,6 +58,28 @@ type RuntimeActionDefinition = ActionDefinition<unknown, unknown> & {
 };
 
 /**
+ * Mirror the upstream approval gate for the AI SDK tool: a consequential public
+ * action or `needsApproval: true` always pauses, and a predicate is evaluated
+ * on the validated tool input with a throwing predicate counted as `true`, so a
+ * broken gate can never silently allow a run.
+ */
+function toolNeedsApproval(
+	actionName: string,
+	definition: RuntimeActionDefinition,
+): boolean | ((ctx: unknown, input: unknown) => Promise<boolean>) {
+	if (definition.publicAgent?.isConsequential === true) return true;
+	const gate = definition.needsApproval;
+	if (typeof gate !== "function") return gate === true;
+	return async (_ctx: unknown, input: unknown) => {
+		try {
+			return Boolean(await gate(input, { caller: "tool", actionName }));
+		} catch {
+			return true;
+		}
+	};
+}
+
+/**
  * Adapt one registered Builder-style action for `@convex-dev/agent` and AI SDK
  * without introducing a second execution path.
  */
@@ -77,8 +99,7 @@ export function createRegisteredActionTool<Context extends ToolCtx = ToolCtx>(
 		...(options.ctx === undefined ? {} : { ctx: options.ctx }),
 		description: definition.tool.description,
 		inputSchema: definition.schema,
-		needsApproval:
-			definition.needsApproval === true || definition.publicAgent?.isConsequential === true,
+		needsApproval: toolNeedsApproval(options.actionName, definition),
 		async execute(ctx, input, call) {
 			const execution = await options.prepareExecution(ctx, input, call);
 			const receipt = await executeRegisteredAction(

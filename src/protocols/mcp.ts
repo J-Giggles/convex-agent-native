@@ -3,7 +3,9 @@ import {
 	type ApprovalVerifier,
 	type ExecuteRegisteredActionResult,
 } from "../action/execute.js";
+import { isExposedToExternalAgents } from "../action/exposure.js";
 import type { ActionRegistry } from "../action/registry.js";
+import { normalizeToolParameters } from "../action/tool-schema.js";
 import { sanitizeErrorMessage, sanitizePersistedValue } from "../action/sanitize.js";
 import { isAgentNativeConvexError, type AgentNativeConvexErrorCode } from "../contracts/error.js";
 import type { ResolvedActionScope } from "../contracts/scope.js";
@@ -75,14 +77,7 @@ function publicConfig(
 ): ReturnType<ActionRegistry["get"]>["definition"] | null {
 	try {
 		const { definition } = registry.get(actionName);
-		if (
-			definition.publicAgent?.expose !== true ||
-			definition.agentTool === false ||
-			definition.toolCallable === false
-		) {
-			return null;
-		}
-		return definition;
+		return isExposedToExternalAgents(definition) ? definition : null;
 	} catch {
 		return null;
 	}
@@ -93,10 +88,7 @@ function isVisible(
 	access: McpAccessContext,
 ): boolean {
 	const exposure = definition.publicAgent;
-	if (!exposure?.expose) return false;
-	if (definition.agentTool === false || definition.toolCallable === false) {
-		return false;
-	}
+	if (!exposure || !isExposedToExternalAgents(definition)) return false;
 	if (exposure.requiresAuth === true && !access.authenticated) return false;
 	if (exposure.readOnly !== true) {
 		return access.authenticated && access.canWrite === true;
@@ -119,10 +111,7 @@ export function listMcpTools(
 			return {
 				name,
 				description: definition.publicAgent?.description ?? definition.tool.description,
-				inputSchema: {
-					...(definition.tool.parameters ?? { properties: {} }),
-					type: "object",
-				},
+				inputSchema: normalizeToolParameters(definition.tool.parameters),
 				annotations: {
 					readOnlyHint: readOnly,
 					destructiveHint: consequential,

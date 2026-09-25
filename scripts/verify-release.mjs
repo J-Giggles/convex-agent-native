@@ -143,7 +143,7 @@ try {
 		const compatibilityRoot = path.join(temporaryRoot, "compatibility-consumer");
 		await writeConsumerManifest(compatibilityRoot, "compatibility-release-consumer");
 		const compatibilityPeers = {
-			"@agent-native/core": "0.133.2",
+			"@agent-native/core": "0.189.0",
 			"@convex-dev/agent": "0.6.4",
 			convex: "1.43.0",
 			"drizzle-orm": "0.45.2",

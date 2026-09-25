@@ -15,6 +15,8 @@ import {
 } from "@agent-native/core/a2a";
 
 import { executeRegisteredAction } from "../action/execute.js";
+import { isExposedToExternalAgents } from "../action/exposure.js";
+import { normalizeToolParameters } from "../action/tool-schema.js";
 import type { ActionRegistry } from "../action/registry.js";
 import { sanitizeErrorMessage, sanitizePersistedValue } from "../action/sanitize.js";
 import { isResolvedActionScope, type ResolvedActionScope } from "../contracts/scope.js";
@@ -296,12 +298,7 @@ function skillsForRegistry(registry: ActionRegistry, authenticated: boolean): Ag
 		.list()
 		.filter(({ definition }) => {
 			const exposure = definition.publicAgent;
-			if (
-				!exposure?.expose ||
-				exposure.readOnly !== true ||
-				definition.agentTool === false ||
-				definition.toolCallable === false
-			) {
+			if (!exposure || !isExposedToExternalAgents(definition) || exposure.readOnly !== true) {
 				return false;
 			}
 			return authenticated || (exposure.requiresAuth !== true && exposure.isConsequential !== true);
@@ -316,10 +313,7 @@ function skillsForRegistry(registry: ActionRegistry, authenticated: boolean): Ag
 			requiresAuth: definition.publicAgent?.requiresAuth === true,
 			isConsequential: definition.publicAgent?.isConsequential === true,
 			...(definition.publicAgent === undefined ? {} : { publicAgent: definition.publicAgent }),
-			inputSchema: {
-				...(definition.tool.parameters ?? { properties: {} }),
-				type: "object",
-			},
+			inputSchema: normalizeToolParameters(definition.tool.parameters),
 		}));
 }
 

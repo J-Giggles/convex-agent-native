@@ -50,6 +50,7 @@ const ACTION_CALLERS = new Set([
 	"cli",
 	"mcp",
 	"a2a",
+	"webmcp",
 	"automation",
 	"extension",
 ]);
