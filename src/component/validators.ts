@@ -7,6 +7,7 @@ export const vActionCaller = v.union(
 	v.literal("cli"),
 	v.literal("mcp"),
 	v.literal("a2a"),
+	v.literal("webmcp"),
 	v.literal("automation"),
 	v.literal("extension"),
 );

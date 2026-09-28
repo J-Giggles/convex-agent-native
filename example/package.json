@@ -8,7 +8,7 @@
 		"test": "vitest run"
 	},
 	"dependencies": {
-		"@agent-native/core": "0.133.2",
+		"@agent-native/core": "0.189.0",
 		"@convex-dev/agent": "0.6.4",
 		"@giggabit/agent-native-convex": "link:..",
 		"ai": "6.0.191",

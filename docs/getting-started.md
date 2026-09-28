@@ -83,4 +83,6 @@ The runnable `example/` is the smallest authenticated integration. The public `d
 
 The package follows semantic versioning while it is pre-1.0: patch releases contain compatible fixes and documentation, while minor releases may add surfaces and can tighten unsafe behavior. Pin an exact version when release reproducibility matters.
 
+Upgrading from 0.1.x to 0.2.0: the reviewed upstream pin is now `@agent-native/core` 0.189.0. Two behaviours tighten. An approval verifier that returns a standing grant is refused unless the action sets `allowPersistentApproval`, and an action with `endsTurn: true` or `mcpTool: false` disappears from MCP, WebMCP and A2A even when `publicAgent.expose` is set. Actions that declare `capabilityScopes` need the host to pass `grantedScopes` into `resolveActionScope`.
+
 This is a compatibility layer for selected public Agent-Native contracts, not an automatic exporter for every Convex function. Hosts explicitly register safe actions and decide which transports expose them. See [compatibility.md](compatibility.md) and [SECURITY.md](../SECURITY.md).

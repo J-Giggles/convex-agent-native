@@ -1,13 +1,14 @@
 import { AgentNativeConvexError } from "../contracts/error.js";
 
 export async function fingerprintActionInput(input: unknown): Promise<string> {
-	const canonical = canonicalJson(input);
-	const bytes = new TextEncoder().encode(canonical);
+	return `sha256:${await sha256Hex(canonicalJson(input))}`;
+}
+
+/** Lower-case hex SHA-256 of a UTF-8 string, using the platform WebCrypto. */
+export async function sha256Hex(text: string): Promise<string> {
+	const bytes = new TextEncoder().encode(text);
 	const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes);
-	const hex = [...new Uint8Array(digest)]
-		.map((byte) => byte.toString(16).padStart(2, "0"))
-		.join("");
-	return `sha256:${hex}`;
+	return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 function canonicalJson(value: unknown): string {

@@ -6,6 +6,8 @@ import { isResolvedActionScope, type ResolvedActionScope } from "../contracts/sc
 import { isAuthenticatedExtensionRequest } from "../internal/extension-caller.js";
 import type { InvocationPersistence, InvocationRecord } from "../persistence/invocations.js";
 import type { ActionPolicyContext, ActionRegistry } from "./registry.js";
+import { deriveApprovalKey } from "./approval.js";
+import { isExposedToExternalAgents, isExposedToInAppAgent, isExternalAgentSurface } from "./exposure.js";
 import { fingerprintActionInput } from "./fingerprint.js";
 import { attachActionExecutionContext } from "./execution-context.js";
 import { assertSafePersistedValue, sanitizeErrorMessage } from "./sanitize.js";
@@ -32,14 +34,30 @@ export interface ExecuteRegisteredActionResult {
 	result: unknown;
 }
 
+export interface ApprovalVerification {
+	approvalGrant: string;
+	actorId: string;
+	scopeKey: string;
+	actionName: string;
+	requestFingerprint: string;
+	/** Content-addressed key for this exact call; equals the upstream `approvalKey`. */
+	approvalKey: string;
+	/**
+	 * Whether the action opted into standing approvals. When false the verifier
+	 * must accept only a single-use grant bound to `approvalKey`; a saved
+	 * preference may satisfy the gate only when this is true.
+	 */
+	allowPersistentApproval: boolean;
+}
+
 export interface ApprovalVerifier {
-	verifyAndConsume(input: {
-		approvalGrant: string;
-		actorId: string;
-		scopeKey: string;
-		actionName: string;
-		requestFingerprint: string;
-	}): Promise<boolean>;
+	verifyAndConsume(input: ApprovalVerification): Promise<boolean | ApprovalVerdict>;
+}
+
+/** Structured verdict; `persistent: true` reports that a standing grant was used. */
+export interface ApprovalVerdict {
+	approved: boolean;
+	persistent?: boolean;
 }
 
 export interface ExecuteRegisteredActionSecurity {
@@ -56,24 +74,20 @@ function assertSurfaceAllowed(
 			`Action ${request.actionName} is not callable from extensions`,
 		);
 	}
-	if (request.caller === "tool" && definition.agentTool === false) {
+	if (request.caller === "tool" && !isExposedToInAppAgent(definition)) {
 		throw new AgentNativeConvexError(
 			"ACTION_NOT_EXPOSED",
 			`Action ${request.actionName} is not exposed to the agent`,
 		);
 	}
-	if (request.caller === "mcp" || request.caller === "a2a") {
-		if (
-			!definition.publicAgent?.expose ||
-			definition.agentTool === false ||
-			definition.toolCallable === false
-		) {
+	if (isExternalAgentSurface(request.caller)) {
+		if (!isExposedToExternalAgents(definition)) {
 			throw new AgentNativeConvexError(
 				"ACTION_NOT_EXPOSED",
 				`Action ${request.actionName} is not exposed on public agent protocols`,
 			);
 		}
-		if (request.caller === "a2a" && !definition.publicAgent.readOnly) {
+		if (request.caller === "a2a" && !definition.publicAgent?.readOnly) {
 			throw new AgentNativeConvexError(
 				"ACTION_NOT_EXPOSED",
 				`A2A direct action ${request.actionName} must be read-only`,
@@ -144,6 +158,33 @@ function assertOutputValidationFailClosed(definition: RuntimeActionDefinition): 
 	}
 }
 
+function assertCapabilityScopes(
+	request: ExecuteRegisteredActionRequest,
+	definition: RuntimeActionDefinition,
+): void {
+	const required = definition.capabilityScopes ?? [];
+	if (required.length === 0) return;
+	const granted = new Set(request.scope.grantedScopes ?? []);
+	const missing = required.filter((scope) => !granted.has(scope));
+	if (missing.length > 0) {
+		throw new AgentNativeConvexError(
+			"ACTION_NOT_AUTHORIZED",
+			`Action ${request.actionName} requires capability scopes the resolved scope does not grant`,
+			{ details: { missingScopes: missing } },
+		);
+	}
+}
+
+function isConnectionRequiredError(
+	error: unknown,
+): error is Error & { provider: string; reason?: string; appId?: string } {
+	return (
+		error instanceof Error &&
+		(error as { agentConnectionRequired?: unknown }).agentConnectionRequired === true &&
+		typeof (error as { provider?: unknown }).provider === "string"
+	);
+}
+
 function isPinnedUpstreamOutputValidationError(
 	definition: RuntimeActionDefinition,
 	error: unknown,
@@ -178,6 +219,7 @@ export async function executeRegisteredAction(
 		request.actionName,
 	);
 	assertSurfaceAllowed(request, definition);
+	assertCapabilityScopes(request, definition as RuntimeActionDefinition);
 
 	const isReadOnly = definition.readOnly === true || definition.publicAgent?.readOnly === true;
 	assertUpstreamAuditDisabled(definition as RuntimeActionDefinition, isReadOnly);
@@ -286,13 +328,24 @@ export async function executeRegisteredAction(
 
 	try {
 		if (approvalRequired) {
-			const approved = await security.approvalVerifier!.verifyAndConsume({
+			const allowPersistentApproval = definition.allowPersistentApproval === true;
+			const verdict = await security.approvalVerifier!.verifyAndConsume({
 				approvalGrant: request.approvedToolCallKey!,
 				actorId: request.scope.subjectId,
 				scopeKey: request.scope.scopeKey,
 				actionName: request.actionName,
 				requestFingerprint,
+				approvalKey: await deriveApprovalKey(request.actionName, requestFingerprint),
+				allowPersistentApproval,
 			});
+			const approved = typeof verdict === "boolean" ? verdict : verdict.approved;
+			const persistent = typeof verdict === "boolean" ? false : verdict.persistent === true;
+			if (approved && persistent && !allowPersistentApproval) {
+				throw new AgentNativeConvexError(
+					"APPROVAL_INVALID",
+					`Action ${request.actionName} requires a fresh approval on every call`,
+				);
+			}
 			if (!approved) {
 				throw new AgentNativeConvexError(
 					"APPROVAL_INVALID",
@@ -307,6 +360,20 @@ export async function executeRegisteredAction(
 			// upstream context union, which does not yet declare that surface.
 			result = await definition.run(validatedInput, context as ActionRunContext);
 		} catch (error) {
+			if (isConnectionRequiredError(error)) {
+				throw new AgentNativeConvexError(
+					"ACTION_CONNECTION_REQUIRED",
+					`Action ${request.actionName} needs a connection before it can run`,
+					{
+						cause: error,
+						details: {
+							provider: error.provider,
+							reason: error.reason ?? "connect",
+							...(error.appId === undefined ? {} : { appId: error.appId }),
+						},
+					},
+				);
+			}
 			if (isPinnedUpstreamOutputValidationError(definition as RuntimeActionDefinition, error)) {
 				throw new AgentNativeConvexError(
 					"ACTION_OUTPUT_INVALID",
