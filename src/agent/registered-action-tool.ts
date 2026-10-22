@@ -1,4 +1,4 @@
-import type { ActionDefinition } from "@agent-native/core/action";
+import type { ActionDefinition } from "../action/contract.js";
 import { createTool, type ToolCtx } from "@convex-dev/agent";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 

@@ -1,6 +1,10 @@
+export type * from "./contract.js";
 export * from "./define.js";
 export * from "./execute.js";
-export { readActionExecutionContext } from "./execution-context.js";
+export {
+	attachActionExecutionContext,
+	readActionExecutionContext,
+} from "./execution-context.js";
 export * from "./registry.js";
 export * from "./sanitize.js";
 export { deriveApprovalKey, isApprovalKey } from "./approval.js";

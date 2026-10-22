@@ -1,4 +1,4 @@
-import type { ActionDefinition, ActionRunContext } from "@agent-native/core/action";
+import type { ActionDefinition, ActionRunContext } from "./contract.js";
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 export type ConvexActionDefinition<TInput, TResult> = ActionDefinition<TInput, TResult> & {

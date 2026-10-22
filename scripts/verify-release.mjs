@@ -146,6 +146,9 @@ try {
 			"@agent-native/core": "0.189.0",
 			"@convex-dev/agent": "0.6.4",
 			convex: "1.43.0",
+			// @convex-dev/agent's open convex-helpers peer range now resolves a
+			// convex-helpers that needs convex >=1.46, so pin the newest that admits 1.43.
+			"convex-helpers": "0.1.124",
 			"drizzle-orm": "0.45.2",
 			react: process.env.REACT_VERSION ?? "19.2.7",
 			"react-dom": process.env.REACT_VERSION ?? "19.2.7",

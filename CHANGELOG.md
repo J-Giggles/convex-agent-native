@@ -17,6 +17,8 @@ All notable changes are documented here. The project uses semantic versioning, w
 - `ACTION_CONNECTION_REQUIRED` error code. An action that throws the upstream `AgentConnectionRequiredError` shape surfaces provider and reason details instead of a generic failure.
 - `defineConvexAction` accepts `uiOnly`, `mcpTool`, `endsTurn`, `deferLoading`, `capabilityScopes` and `allowPersistentApproval`.
 - Public helpers `deriveApprovalKey`, `isExposedToInAppAgent`, `isExposedToExternalAgents` and `normalizeToolParameters`.
+- `attachActionExecutionContext` is exported from `./action`, so a host can bind the per-invocation execution context outside `executeRegisteredAction`.
+- The package ships its own action type contract (`ActionDefinition`, `ActionRunContext`, `ActionCaller` and their configs) from `./action`. Public action declarations no longer import `@agent-native/core/action`, so they do not resolve to `any` under `skipLibCheck` and need no core install for types.
 
 ### Notes
 

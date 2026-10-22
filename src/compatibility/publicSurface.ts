@@ -46,6 +46,7 @@ export interface UpstreamPublicTypeSnapshot {
 export const PUBLIC_API_GROUP_SNAPSHOT = Object.freeze({
 	action: Object.freeze([
 		"ActionRegistry",
+		"attachActionExecutionContext",
 		"defineConvexAction",
 		"deriveApprovalKey",
 		"executeRegisteredAction",
