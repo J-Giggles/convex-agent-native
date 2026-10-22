@@ -49,6 +49,9 @@ try {
 				[packageJson.name]: `file:${archivePath}`,
 				"@convex-dev/agent": "0.6.4",
 				convex: "1.43.0",
+				// @convex-dev/agent's open convex-helpers peer range now resolves a
+				// convex-helpers that needs convex >=1.46, so pin the newest that admits 1.43.
+				"convex-helpers": "0.1.124",
 				typescript: "5.9.3",
 			},
 		}),
