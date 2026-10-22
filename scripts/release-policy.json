@@ -116,6 +116,42 @@
 			"version": "0.18.5",
 			"source": 1108111,
 			"reason": "Optional @agent-native/core transitive spreadsheet ingestion dependency; this package emits no @agent-native/core runtime import and never loads it."
+		},
+		{
+			"package": "@modelcontextprotocol/client",
+			"version": "2.0.0",
+			"source": 1241338,
+			"reason": "Optional @agent-native/core transitive MCP SDK dependency; this package emits no @agent-native/core or @modelcontextprotocol runtime import, starts no MCP client, server or transport (dist/protocols/mcp.js is a transport-free JSON-RPC handler), and never loads it. GHSA-6qxp-vccf-f47h affects the client OAuth flow (credentials sent to an MCP-server-chosen authorization server); this package never constructs an MCP Client or runs OAuth; reviewed 2026-10-22 (agent-native-convex-advisories-review-20261022)."
+		},
+		{
+			"package": "@modelcontextprotocol/sdk",
+			"version": "1.30.0",
+			"source": 1241339,
+			"reason": "Optional @agent-native/core transitive MCP SDK dependency; this package emits no @agent-native/core or @modelcontextprotocol runtime import, starts no MCP client, server or transport (dist/protocols/mcp.js is a transport-free JSON-RPC handler), and never loads it. GHSA-6qxp-vccf-f47h affects the v1 SDK Client OAuth flow; this package never constructs an MCP Client or runs OAuth; reviewed 2026-10-22 (agent-native-convex-advisories-review-20261022)."
+		},
+		{
+			"package": "@modelcontextprotocol/sdk",
+			"version": "1.30.0",
+			"source": 1242628,
+			"reason": "Optional @agent-native/core transitive MCP SDK dependency; this package emits no @agent-native/core or @modelcontextprotocol runtime import, starts no MCP client, server or transport (dist/protocols/mcp.js is a transport-free JSON-RPC handler), and never loads it. GHSA-22jm-h49p-29qw affects experimental server-side tasks not bound to their session; this package never instantiates the SDK McpServer/Server or its task support; reviewed 2026-10-22 (agent-native-convex-advisories-review-20261022)."
+		},
+		{
+			"package": "@modelcontextprotocol/sdk",
+			"version": "1.30.0",
+			"source": 1242649,
+			"reason": "Optional @agent-native/core transitive MCP SDK dependency; this package emits no @agent-native/core or @modelcontextprotocol runtime import, starts no MCP client, server or transport (dist/protocols/mcp.js is a transport-free JSON-RPC handler), and never loads it. GHSA-46jr-4wx8-v453 affects request validation in the SDK server HTTP transport (memory exhaustion); this package never instantiates the SDK server or its HTTP transport, and the host owns transport; reviewed 2026-10-22 (agent-native-convex-advisories-review-20261022)."
+		},
+		{
+			"package": "@modelcontextprotocol/server",
+			"version": "2.0.0",
+			"source": 1242647,
+			"reason": "Optional @agent-native/core transitive MCP SDK dependency; this package emits no @agent-native/core or @modelcontextprotocol runtime import, starts no MCP client, server or transport (dist/protocols/mcp.js is a transport-free JSON-RPC handler), and never loads it. GHSA-jm63-cq47-j5jp affects shared v2 server/transport instances crossing client messages; this package never instantiates the v2 server or a transport; reviewed 2026-10-22 (agent-native-convex-advisories-review-20261022)."
+		},
+		{
+			"package": "@modelcontextprotocol/server",
+			"version": "2.0.0",
+			"source": 1242648,
+			"reason": "Optional @agent-native/core transitive MCP SDK dependency; this package emits no @agent-native/core or @modelcontextprotocol runtime import, starts no MCP client, server or transport (dist/protocols/mcp.js is a transport-free JSON-RPC handler), and never loads it. GHSA-46jr-4wx8-v453 affects request validation in the v2 server package (memory exhaustion); this package never instantiates the v2 server or its transport; reviewed 2026-10-22 (agent-native-convex-advisories-review-20261022)."
 		}
 	]
 }
