@@ -1,3 +1,8 @@
+import type {
+	ActionCaller as CoreActionCaller,
+	ActionDefinition as CoreActionDefinition,
+	ActionRunContext as CoreActionRunContext,
+} from "@agent-native/core/action";
 import type { AgentNativeExtensionDefinition } from "@agent-native/core/client/extensions";
 import type { ComponentApi as AgentComponentApi } from "@convex-dev/agent/_generated/component.js";
 import { describe, expect, expectTypeOf, it } from "vitest";
@@ -59,6 +64,18 @@ describe("public API and upstream compile snapshots", () => {
 			storageScopes: ["user", "organization"],
 		});
 		expect(installation.revision.renderPolicy).toEqual(extensions.INERT_EXTENSION_RENDER_POLICY);
+	});
+
+	it("CVX-N-034 keeps the package action contract interchangeable with pinned upstream", () => {
+		expectTypeOf<action.ActionCaller>().toEqualTypeOf<CoreActionCaller>();
+		expectTypeOf<action.ActionRunContext>().toMatchTypeOf<CoreActionRunContext>();
+		expectTypeOf<CoreActionRunContext>().toMatchTypeOf<action.ActionRunContext>();
+		expectTypeOf<CoreActionDefinition<{ id: string }, number>>().toMatchTypeOf<
+			action.ActionDefinition<{ id: string }, number>
+		>();
+		expectTypeOf<action.ConvexActionDefinition<{ id: string }, number>>().toMatchTypeOf<
+			CoreActionDefinition<{ id: string }, number>
+		>();
 	});
 
 	it("compile snapshot still resolves all reviewed upstream type families", () => {

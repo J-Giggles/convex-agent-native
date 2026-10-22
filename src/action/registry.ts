@@ -1,4 +1,4 @@
-import type { ActionDefinition, ActionRunContext } from "@agent-native/core/action";
+import type { ActionDefinition, ActionRunContext } from "./contract.js";
 
 import { AgentNativeConvexError } from "../contracts/error.js";
 

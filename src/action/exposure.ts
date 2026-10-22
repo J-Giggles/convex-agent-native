@@ -1,4 +1,4 @@
-import type { ActionDefinition } from "@agent-native/core/action";
+import type { ActionDefinition } from "./contract.js";
 
 import type { ActionSurface } from "./execute.js";
 

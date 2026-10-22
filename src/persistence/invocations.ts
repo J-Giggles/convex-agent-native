@@ -1,4 +1,4 @@
-import type { ActionCaller } from "@agent-native/core/action";
+import type { ActionCaller } from "../action/contract.js";
 
 export type InvocationStatus = "running" | "completed" | "failed";
 export type InvocationCaller = ActionCaller | "extension";

@@ -1,4 +1,4 @@
-import type { ActionRunContext } from "@agent-native/core/action";
+import type { ActionRunContext } from "./contract.js";
 
 const executionContextKey: unique symbol = Symbol("agent-native-convex.execution-context");
 
