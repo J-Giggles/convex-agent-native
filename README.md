@@ -34,7 +34,7 @@ See the [copy-paste getting-started guide](docs/getting-started.md) for the firs
 
 ## Public agent-first to-do demo
 
-The [live Convex-backed demo](https://j-giggles.github.io/convex-agent-native/) is an independent port of the to-do workflow in Steve Sewell and Builder.io's [How (and why) to build agent-first apps](https://www.builder.io/blog/agent-first-apps). It demonstrates the same module-singleton Builder-style action definition objects across:
+The Convex-backed demo in [`demo/`](demo/) is an independent port of the to-do workflow in Steve Sewell and Builder.io's [How (and why) to build agent-first apps](https://www.builder.io/blog/agent-first-apps). It demonstrates the same module-singleton Builder-style action definition objects across:
 
 - reactive create, edit, complete, reopen, and delete UI flows;
 - a deterministic, zero-model-cost built-in agent;
@@ -44,6 +44,8 @@ The [live Convex-backed demo](https://j-giggles.github.io/convex-agent-native/) 
 Convex is the demo's only persistent database. Anonymous capabilities are isolated per browser session, expire after 24 hours, and never appear in URLs. Reset rotates that capability to a fresh Convex action scope, restores seeded tasks, and clears its visible chat, pending confirmation, receipt, and idempotency state while retaining prior audit records durably outside the new scope. Hard server-side per-session and deployment-wide operation quotas fail closed; caller-controlled forwarding headers never select a quota bucket, tasks cap at 200 per session, and public provider-backed model cost is zero.
 
 Provider-backed chat is deliberately disabled in the public deployment. `demo/agent/provider.ts` documents a server-only plug-in seam that requires both an explicit enable flag and a code-registered provider; credentials and provider payloads are never persisted.
+
+Automatic GitHub Pages deployment has been retired. GitHub Actions is disabled for this repository, and there is no replacement deployment service or background process. Previously published Pages content may remain, but it does not track new commits.
 
 For local development from a clean checkout:
 
