@@ -1,6 +1,8 @@
 # Public demo operations
 
-The public demo is served at <https://j-giggles.github.io/convex-agent-native/> and uses the dedicated production deployment `bold-ant-924`:
+Automatic GitHub Pages deployment has been retired. GitHub Actions is disabled for this repository, and no replacement deploy service or background process is installed. The previous Pages URL, <https://j-giggles.github.io/convex-agent-native/>, may still serve an older build. It no longer tracks new commits.
+
+The demo's dedicated Convex production deployment is `bold-ant-924`. Retiring the Pages workflow does not change its backend or endpoints:
 
 - Convex client: `https://bold-ant-924.convex.cloud`
 - Convex HTTP actions: `https://bold-ant-924.convex.site`
@@ -8,6 +10,10 @@ The public demo is served at <https://j-giggles.github.io/convex-agent-native/> 
 - direct action: `POST https://bold-ant-924.convex.site/demo/action`
 
 The deployment contains demo data only. It does not share a project, deployment, table, or credential with another application.
+
+## Deployment verification utility
+
+`scripts/verify-demo-deployment.mjs` remains available as a manually invoked configuration validator and manifest writer. Its manifest records the former Pages target, not evidence that a deployment ran. Its tests remain in `pnpm test:guardrails`. The records under `docs/verification/` describe earlier verification runs, not current deployment status.
 
 ## Anonymous capability
 
