@@ -117,7 +117,7 @@
 		"typecheck": "tsc --noEmit -p tsconfig.json",
 		"pretest": "node scripts/verify-demo-boundaries.mjs",
 		"test": "vitest run",
-		"test:guardrails": "node --test scripts/repository-guardrails.test.mjs scripts/verify-demo-boundaries.test.mjs scripts/verify-demo-deployment.test.mjs scripts/convex-runtime-boundary.test.mjs",
+		"test:guardrails": "node --test scripts/analyze-install.test.mjs scripts/repository-guardrails.test.mjs scripts/verify-demo-boundaries.test.mjs scripts/verify-demo-deployment.test.mjs scripts/convex-runtime-boundary.test.mjs",
 		"test:convex-consumer": "node scripts/verify-convex-consumer.mjs",
 		"test:watch": "vitest",
 		"prepack": "node scripts/build.mjs",
